@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KRONOS — Delta Air Lines Disruption Recovery System | Jesus Perez</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background: #FAFAF8;
+            --surface: #F3F2EE;
+            --surface-2: #E9E8E3;
+            --primary: #5B21B6;
+            --primary-light: #7C3AED;
+            --secondary: #1D4ED8;
+            --accent: #047857;
+            --text: #111111;
+            --muted: #6B7280;
+            --border: #E2E1DD;
+            --navbar-bg-rgb: 250, 250, 248;
+            --glow: rgba(91, 33, 182, 0.14);
+        }
+
+        [data-theme="dark"] {
+            --background: #07070E;
+            --surface: #0E0E1A;
+            --surface-2: #151524;
+            --primary: #A78BFA;
+            --primary-light: #C4B5FD;
+            --secondary: #60A5FA;
+            --accent: #34D399;
+            --text: #F0F0F8;
+            --muted: #9CA3AF;
+            --border: #1C1C2E;
+            --navbar-bg-rgb: 7, 7, 14;
+            --glow: rgba(167, 139, 250, 0.15);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            background-color: var(--background);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Fraunces', serif;
+            letter-spacing: -0.02em;
+        }
+
+        /* ── Navbar ── */
+        .navbar {
+            background-color: rgba(var(--navbar-bg-rgb), 0.88);
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: box-shadow 0.3s ease, background-color 0.3s ease;
+        }
+        .navbar.scrolled { box-shadow: 0 4px 24px rgba(0,0,0,0.07); }
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--primary) !important;
+            font-family: 'Fraunces', serif;
+            letter-spacing: -0.04em;
+        }
+        .nav-link {
+            font-weight: 500;
+            font-size: 0.85rem;
+            margin: 0 8px;
+            color: var(--muted) !important;
+            transition: color 0.2s ease;
+            position: relative;
+            padding-bottom: 4px !important;
+        }
+        .nav-link:hover { color: var(--text) !important; }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0; height: 1.5px;
+            bottom: 0; left: 0;
+            background: var(--primary);
+            transition: width 0.25s ease;
+        }
+        .nav-link:hover::after { width: 100%; }
+
+        #theme-toggle {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 8px;
+            width: 36px; height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-left: 14px;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+        #theme-toggle:hover { border-color: var(--primary); color: var(--primary); }
+
+        [data-theme="dark"] .navbar { background-color: rgba(7,7,14,0.88) !important; }
+        [data-theme="dark"] .navbar-toggler { border-color: var(--border); }
+        [data-theme="dark"] .navbar-toggler-icon { filter: invert(1); }
+
+        /* ── Hero / Page Header ── */
+        .page-hero {
+            background: linear-gradient(135deg, var(--background) 0%, var(--surface) 100%);
+            padding: 130px 0 70px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 28px;
+            transition: color 0.2s ease;
+        }
+
+        .back-link:hover { color: var(--primary); }
+
+        .project-title {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 12px;
+            line-height: 1.15;
+        }
+
+        .project-subtitle {
+            color: var(--muted);
+            font-size: 1.05rem;
+            margin-bottom: 28px;
+        }
+
+        /* Tags */
+        .tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            letter-spacing: 0.02em;
+        }
+
+        .tag-primary {
+            background: rgba(124, 58, 237, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(124, 58, 237, 0.2);
+        }
+
+        .tag-secondary {
+            background: rgba(37, 99, 235, 0.08);
+            color: var(--secondary);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+        }
+
+        .tag-accent {
+            background: rgba(16, 185, 129, 0.08);
+            color: var(--accent);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        [data-theme="dark"] .tag-primary {
+            background: rgba(139, 92, 246, 0.15);
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+
+        [data-theme="dark"] .tag-secondary {
+            background: rgba(96, 165, 250, 0.1);
+            border-color: rgba(96, 165, 250, 0.25);
+        }
+
+        [data-theme="dark"] .tag-accent {
+            background: rgba(52, 211, 153, 0.1);
+            border-color: rgba(52, 211, 153, 0.25);
+        }
+
+        /* ── Meta bar ── */
+        .meta-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            padding: 20px 24px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-top: 32px;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .meta-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+        }
+
+        .meta-value {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        /* ── Content sections ── */
+        .content-section {
+            padding: 60px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .content-section:last-of-type { border-bottom: none; }
+
+        .section-heading {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-heading::after {
+            content: '';
+            position: absolute;
+            width: 40%;
+            height: 3px;
+            background-color: var(--secondary);
+            bottom: -8px;
+            left: 0;
+        }
+
+        .section-lead {
+            color: var(--muted);
+            margin-top: 20px;
+            margin-bottom: 0;
+            line-height: 1.75;
+        }
+
+        /* ── Highlight box ── */
+        .highlight-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--secondary);
+            border-radius: 8px;
+            padding: 24px 28px;
+            margin-top: 28px;
+        }
+
+        .highlight-box p {
+            color: var(--muted);
+            margin: 0;
+            line-height: 1.75;
+        }
+
+        /* ── Feature cards ── */
+        .feature-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-top: 3px solid var(--border);
+            border-radius: 10px;
+            padding: 24px;
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-top-color: var(--secondary);
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.08);
+            transform: translateY(-4px);
+        }
+
+        .feature-card h5 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            font-size: 0.875rem;
+            color: var(--muted);
+            margin: 0;
+            line-height: 1.65;
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            font-size: 16px;
+        }
+
+        .icon-violet { background: rgba(124,58,237,0.1); color: var(--primary); }
+        .icon-blue   { background: rgba(37,99,235,0.1);  color: var(--secondary); }
+        .icon-green  { background: rgba(16,185,129,0.1); color: var(--accent); }
+
+        [data-theme="dark"] .icon-violet { background: rgba(139,92,246,0.15); }
+        [data-theme="dark"] .icon-blue   { background: rgba(96,165,250,0.12); }
+        [data-theme="dark"] .icon-green  { background: rgba(52,211,153,0.12); }
+
+        /* ── Research list ── */
+        .research-list {
+            list-style: none;
+            padding: 0;
+            margin: 24px 0 0;
+        }
+
+        .research-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 0.925rem;
+        }
+
+        .research-list li:last-child { border-bottom: none; }
+
+        .research-list li i {
+            color: var(--accent);
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+
+        /* ── Contributions list ── */
+        .contrib-list {
+            list-style: none;
+            padding: 0;
+            margin: 24px 0 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .contrib-list { grid-template-columns: 1fr; }
+            .project-title { font-size: 2rem; }
+        }
+
+        .contrib-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            color: var(--muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .contrib-list li i {
+            color: var(--primary);
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+
+        /* ── Takeaways ── */
+        .takeaway-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 28px;
+        }
+
+        @media (max-width: 992px) { .takeaway-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 576px) { .takeaway-grid { grid-template-columns: 1fr; } }
+
+        .takeaway-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 18px 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .takeaway-item i { color: var(--secondary); font-size: 14px; flex-shrink: 0; }
+
+        /* ── Image placeholder ── */
+        .diagram-placeholder {
+            background: var(--surface-2);
+            border: 2px dashed var(--border);
+            border-radius: 10px;
+            min-height: 360px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            color: var(--muted);
+            text-align: center;
+            padding: 40px;
+            margin-top: 28px;
+        }
+
+        .diagram-placeholder i { font-size: 2.5rem; opacity: 0.4; }
+        .diagram-placeholder p { margin: 0; font-size: 0.875rem; }
+
+        /* ── CTA banner ── */
+        .cta-banner {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 40px 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-top: 60px;
+            margin-bottom: 60px;
+        }
+
+        .cta-banner h4 { margin: 0 0 6px; font-size: 1.2rem; color: var(--text); }
+        .cta-banner p  { margin: 0; color: var(--muted); font-size: 0.9rem; }
+
+        .btn-primary-custom {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            padding: 11px 26px;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: var(--primary);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .btn-primary-custom:hover {
+            background-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(124,58,237,0.35);
+            color: #FFFFFF;
+        }
+
+        .btn-outline-custom {
+            border: 2px solid var(--border);
+            color: var(--text);
+            background: transparent;
+            padding: 11px 26px;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .btn-outline-custom:hover {
+            border-color: var(--secondary);
+            color: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        /* ── Footer ── */
+        footer {
+            background-color: var(--surface-2);
+            color: var(--text);
+            padding: 30px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .social-icons a {
+            color: var(--text);
+            font-size: 18px;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+
+        .social-icons a:hover {
+            color: var(--primary);
+            transform: translateY(-3px);
+            display: inline-block;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 20px; right: 20px;
+            width: 48px; height: 48px;
+            background-color: var(--primary);
+            color: #FFFFFF;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            text-decoration: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .back-to-top.active { opacity: 1; visibility: visible; }
+
+        .back-to-top:hover {
+            background-color: var(--surface-2);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .text-muted { color: var(--muted) !important; }
+        .bg-light { background-color: var(--surface-2) !important; }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">Jesus Perez</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#skills">Skills</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#projects">Projects</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#experience">Experience</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#certificates">Certificates</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#contact">Contact</a></li>
+                </ul>
+            </div>
+            <button id="theme-toggle" aria-label="Toggle dark mode">
+                <i class="fas fa-moon" id="theme-icon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Page Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <a href="index.html#projects" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Projects
+            </a>
+
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <span class="tag tag-primary">Systems Analysis</span>
+                <span class="tag tag-secondary">Business Process Modeling</span>
+                <span class="tag tag-secondary">UML</span>
+                <span class="tag tag-accent">Solution Architecture</span>
+            </div>
+
+            <h1 class="project-title">KRONOS</h1>
+            <p class="project-subtitle">Delta Air Lines Disruption Recovery System &mdash; Systems Analysis &amp; Business Process Capstone</p>
+
+            <div class="meta-bar">
+                <div class="meta-item">
+                    <span class="meta-label">Duration</span>
+                    <span class="meta-value">January 2026 – May 2026</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Type</span>
+                    <span class="meta-value">Senior Capstone</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Tools</span>
+                    <span class="meta-value">UML · Lucidchart · Figma · Bizagi · Microsoft Project</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Course</span>
+                    <span class="meta-value">Systems Analysis &amp; Design</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Overview -->
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-heading">Project Overview</h2>
+            <p class="section-lead">
+                KRONOS is a passenger disruption recovery system developed as part of a senior Systems Analysis &amp; Business Process Capstone. My team selected Delta Air Lines as the target organization and analyzed how passengers navigate delays, cancellations, refunds, vouchers, and customer support during operational disruptions.
+            </p>
+            <p class="section-lead mt-3">
+                After researching Delta's business environment and operational challenges, we designed KRONOS as a centralized decision-support platform that helps passengers understand their recovery options and take action more efficiently.
+            </p>
+
+            <!-- Dashboard Mockup -->
+            <div style="margin-top: 48px; text-align: center;">
+                <p style="font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 20px;">Interactive Dashboard Concept</p>
+                <div style="display: inline-block; border-radius: 14px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.1);">
+                    <iframe
+                        src="KRONOS-dashboard.html"
+                        title="KRONOS Disruption Recovery Dashboard mockup"
+                        style="width: 480px; height: 940px; border: none; display: block;"
+                        loading="lazy"
+                        scrolling="no"
+                    ></iframe>
+                </div>
+                <p style="margin-top: 14px; font-size: 0.8rem; color: var(--muted);">Conceptual UI mockup — not an official Delta Air Lines product</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- The Problem -->
+    <section class="content-section bg-light">
+        <div class="container">
+            <h2 class="section-heading">The Problem</h2>
+            <div class="highlight-box">
+                <p>
+                    Airline disruptions often create confusion for passengers. Travelers may need to compare rebooking options, request refunds, access travel credits, locate compensation benefits, or contact customer service — all while dealing with an unexpected interruption to their trip. These processes can become fragmented across multiple systems and communication channels, leading to longer resolution times and increased pressure on customer support teams.
+                </p>
+            </div>
+            <p class="section-lead mt-4">
+                The goal of KRONOS was to simplify the recovery experience by providing passengers with a single platform for managing disruption-related decisions.
+            </p>
+        </div>
+    </section>
+
+    <!-- Research & Analysis -->
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-heading">Research &amp; Analysis</h2>
+            <p class="section-lead">
+                The project began with a comprehensive business analysis of Delta Air Lines. Through structured research, we identified operational disruption recovery as the area where a technology-driven solution could deliver the most meaningful improvement to both customer experience and operational efficiency.
+            </p>
+
+            <ul class="research-list mt-4">
+                <li>
+                    <i class="fas fa-check-small"></i>
+                    <span><strong style="color: var(--text);">SWOT Analysis</strong> — Evaluated Delta's internal strengths and weaknesses alongside external market pressures affecting disruption handling.</span>
+                </li>
+                <li>
+                    <i class="fas fa-check-small"></i>
+                    <span><strong style="color: var(--text);">Business Process Analysis</strong> — Mapped existing passenger recovery workflows to identify bottlenecks and fragmentation points.</span>
+                </li>
+                <li>
+                    <i class="fas fa-check-small"></i>
+                    <span><strong style="color: var(--text);">Stakeholder Research</strong> — Identified key actors including passengers, gate agents, and customer support representatives and their respective needs.</span>
+                </li>
+                <li>
+                    <i class="fas fa-check-small"></i>
+                    <span><strong style="color: var(--text);">Requirements Gathering</strong> — Translated research findings into functional and non-functional system requirements.</span>
+                </li>
+                <li>
+                    <i class="fas fa-check-small"></i>
+                    <span><strong style="color: var(--text);">Workflow Evaluation</strong> — Assessed current-state processes to define the scope and boundaries of the proposed solution.</span>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Proposed Solution -->
+    <section class="content-section bg-light">
+        <div class="container">
+            <h2 class="section-heading">Proposed Solution</h2>
+            <p class="section-lead">
+                KRONOS is a centralized disruption recovery dashboard designed to help passengers make informed decisions during flight disruptions. By consolidating recovery actions into a single workflow, the platform aims to reduce passenger confusion while improving the overall resolution experience.
+            </p>
+
+            <div class="row g-3 mt-2">
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-blue"><i class="fas fa-route"></i></div>
+                        <h5>Smart Rebooking Assistance</h5>
+                        <p>Passengers can review and compare alternative flight options based on availability and travel preferences, reducing the time spent searching across separate channels.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-violet"><i class="fas fa-receipt"></i></div>
+                        <h5>Refund &amp; eCredit Comparison</h5>
+                        <p>Provides clear, side-by-side information to help travelers evaluate refund requests versus future travel credits before committing to a resolution path.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-green"><i class="fas fa-ticket-alt"></i></div>
+                        <h5>Digital Compensation Management</h5>
+                        <p>Allows passengers to access and manage eligible vouchers and travel benefits in one place, without navigating separate airline systems.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-blue"><i class="fas fa-tasks"></i></div>
+                        <h5>Recovery Status Tracking</h5>
+                        <p>Provides real-time visibility into the progress of disruption-related requests and actions, keeping passengers informed throughout the resolution process.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-violet"><i class="fas fa-headset"></i></div>
+                        <h5>Customer Support Escalation</h5>
+                        <p>Enables passengers to transfer relevant trip context directly to support representatives, reducing repeat explanations and accelerating issue resolution.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-green"><i class="fas fa-layer-group"></i></div>
+                        <h5>Unified Recovery Dashboard</h5>
+                        <p>A single interface consolidating all disruption-related options — the core architectural decision that differentiates KRONOS from Delta's current fragmented workflows.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- System Design -->
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-heading">System Design</h2>
+            <p class="section-lead">
+                KRONOS was documented using industry-standard systems analysis and design methodologies. Use case diagrams defined the interactions between passengers and the system, establishing core functionality and user requirements.
+            </p>
+
+            <div style="text-align: center; margin-top: 28px;">
+                <img src="img/Use case diagram.png" alt="KRONOS Use Case Diagram" style="max-width: 70%; border-radius: 10px; border: 1px solid var(--border);">
+            </div>
+        </div>
+    </section>
+
+    <!-- My Contributions -->
+    <section class="content-section bg-light">
+        <div class="container">
+            <h2 class="section-heading">My Contributions</h2>
+            <p class="section-lead">
+                Throughout the project I contributed to the analysis, planning, and documentation of the proposed system.
+            </p>
+
+            <ul class="contrib-list">
+                <li><i class="fas fa-circle-dot" style="font-size: 10px; margin-top: 5px;"></i><span>Participated in organizational and process analysis</span></li>
+                <li><i class="fas fa-circle-dot" style="font-size: 10px; margin-top: 5px;"></i><span>Contributed to SWOT analysis and requirements definition</span></li>
+                <li><i class="fas fa-circle-dot" style="font-size: 10px; margin-top: 5px;"></i><span>Modeled business workflows and user interactions</span></li>
+                <li><i class="fas fa-circle-dot" style="font-size: 10px; margin-top: 5px;"></i><span>Created and documented UML artifacts</span></li>
+                <li><i class="fas fa-circle-dot" style="font-size: 10px; margin-top: 5px;"></i><span>Supported the design of passenger-facing recovery features</span></li>
+                <li><i class="fas fa-circle-dot" style="font-size: 10px; margin-top: 5px;"></i><span>Translated business challenges into technology-focused solutions</span></li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Key Takeaways -->
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-heading">Key Takeaways</h2>
+            <p class="section-lead">
+                KRONOS demonstrated how business analysis, technical documentation, and user experience considerations work together to support effective software and system development.
+            </p>
+
+            <div class="takeaway-grid">
+                <div class="takeaway-item"><i class="fas fa-check"></i> Systems Analysis &amp; Design</div>
+                <div class="takeaway-item"><i class="fas fa-check"></i> Business Process Modeling</div>
+                <div class="takeaway-item"><i class="fas fa-check"></i> Requirements Engineering</div>
+                <div class="takeaway-item"><i class="fas fa-check"></i> UML Documentation</div>
+                <div class="takeaway-item"><i class="fas fa-check"></i> User-Centered Solution Design</div>
+                <div class="takeaway-item"><i class="fas fa-check"></i> Cross-functional Team Collaboration</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Banner -->
+    <div class="container">
+        <div class="cta-banner">
+            <div>
+                <h4>Full Project Documentation</h4>
+                <p>The complete capstone report includes business analysis, requirements documentation, UML artifacts, process models, and system design deliverables.</p>
+            </div>
+            <div class="d-flex flex-wrap gap-3">
+                <a href="files/Delta Air Lines - Team 1.pdf" target="_blank" class="btn-primary-custom">
+                    <i class="fas fa-file-pdf"></i> View Full Report
+                </a>
+                <a href="index.html#projects" class="btn-outline-custom">
+                    <i class="fas fa-arrow-left"></i> All Projects
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="container">
+            <div class="social-icons mb-3">
+                <a href="http://www.linkedin.com/in/jesus-perez-8a228b192" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                <a href="https://github.com/JpHolding1" target="_blank"><i class="fab fa-github"></i></a>
+                <a href="mailto:Jesusperez36070@gmail.com"><i class="fas fa-envelope"></i></a>
+            </div>
+            <p class="mb-0" style="font-size: 0.875rem;">&copy; <span id="year"></span> Jesus Perez. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <a href="#" class="back-to-top"><i class="fas fa-arrow-up"></i></a>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            document.querySelector('.navbar').classList.toggle('scrolled', window.pageYOffset > 50);
+            document.querySelector('.back-to-top').classList.toggle('active', window.pageYOffset > 300);
+        });
+
+        // Dark mode
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon   = document.getElementById('theme-icon');
+        const html        = document.documentElement;
+
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        if (savedTheme === 'dark') {
+            html.setAttribute('data-theme', 'dark');
+            themeIcon.classList.replace('fa-moon', 'fa-sun');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+                html.removeAttribute('data-theme');
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+    </script>
+</body>
+</html>
