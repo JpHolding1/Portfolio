@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Cloud Infrastructure & Web Server Deployment | Jesus Perez</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background: #FAFAF8;
+            --surface: #F3F2EE;
+            --surface-2: #E9E8E3;
+            --primary: #5B21B6;
+            --primary-light: #7C3AED;
+            --secondary: #1D4ED8;
+            --accent: #047857;
+            --text: #111111;
+            --muted: #6B7280;
+            --border: #E2E1DD;
+            --navbar-bg-rgb: 250, 250, 248;
+            --glow: rgba(91, 33, 182, 0.14);
+        }
+
+        [data-theme="dark"] {
+            --background: #07070E;
+            --surface: #0E0E1A;
+            --surface-2: #151524;
+            --primary: #A78BFA;
+            --primary-light: #C4B5FD;
+            --secondary: #60A5FA;
+            --accent: #34D399;
+            --text: #F0F0F8;
+            --muted: #9CA3AF;
+            --border: #1C1C2E;
+            --navbar-bg-rgb: 7, 7, 14;
+            --glow: rgba(167, 139, 250, 0.15);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            background-color: var(--background);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4, h5, h6 { font-family: 'Fraunces', serif; letter-spacing: -0.02em; }
+
+        /* ── Navbar ── */
+        .navbar {
+            background-color: rgba(var(--navbar-bg-rgb), 0.88);
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: box-shadow 0.3s ease, background-color 0.3s ease;
+        }
+        .navbar.scrolled { box-shadow: 0 4px 24px rgba(0,0,0,0.07); }
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--primary) !important;
+            font-family: 'Fraunces', serif;
+            letter-spacing: -0.04em;
+        }
+        .nav-link {
+            font-weight: 500;
+            font-size: 0.85rem;
+            margin: 0 8px;
+            color: var(--muted) !important;
+            transition: color 0.2s ease;
+            position: relative;
+            padding-bottom: 4px !important;
+        }
+        .nav-link:hover { color: var(--text) !important; }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0; height: 1.5px;
+            bottom: 0; left: 0;
+            background: var(--primary);
+            transition: width 0.25s ease;
+        }
+        .nav-link:hover::after { width: 100%; }
+
+        #theme-toggle {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 8px;
+            width: 36px; height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-left: 14px;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+        #theme-toggle:hover { border-color: var(--primary); color: var(--primary); }
+
+        [data-theme="dark"] .navbar { background-color: rgba(7,7,14,0.88) !important; }
+        [data-theme="dark"] .navbar-toggler { border-color: var(--border); }
+        [data-theme="dark"] .navbar-toggler-icon { filter: invert(1); }
+
+        /* ── Page Hero ── */
+        .page-hero {
+            background: linear-gradient(135deg, var(--background) 0%, var(--surface) 100%);
+            padding: 130px 0 70px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 28px;
+            transition: color 0.2s ease;
+        }
+        .back-link:hover { color: var(--primary); }
+
+        .project-title {
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 12px;
+            line-height: 1.15;
+        }
+        .project-subtitle {
+            color: var(--muted);
+            font-size: 1.05rem;
+            margin-bottom: 28px;
+        }
+
+        /* Tags */
+        .tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            letter-spacing: 0.02em;
+        }
+        .tag-primary  { background: rgba(124,58,237,0.1);  color: var(--primary);   border: 1px solid rgba(124,58,237,0.2); }
+        .tag-secondary{ background: rgba(37,99,235,0.08);  color: var(--secondary); border: 1px solid rgba(37,99,235,0.2);  }
+        .tag-accent   { background: rgba(16,185,129,0.08); color: var(--accent);    border: 1px solid rgba(16,185,129,0.2); }
+
+        [data-theme="dark"] .tag-primary   { background: rgba(139,92,246,0.15);  border-color: rgba(139,92,246,0.3);  }
+        [data-theme="dark"] .tag-secondary { background: rgba(96,165,250,0.1);   border-color: rgba(96,165,250,0.25); }
+        [data-theme="dark"] .tag-accent    { background: rgba(52,211,153,0.1);   border-color: rgba(52,211,153,0.25); }
+
+        /* Meta bar */
+        .meta-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            padding: 20px 24px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-top: 32px;
+        }
+        .meta-item { display: flex; flex-direction: column; gap: 2px; }
+        .meta-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+        }
+        .meta-value { font-size: 0.9rem; font-weight: 500; color: var(--text); }
+
+        /* Content sections */
+        .content-section {
+            padding: 60px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .content-section:last-of-type { border-bottom: none; }
+
+        .section-heading {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+            position: relative;
+            display: inline-block;
+        }
+        .section-heading::after {
+            content: '';
+            position: absolute;
+            width: 40%; height: 3px;
+            background-color: var(--secondary);
+            bottom: -8px; left: 0;
+        }
+
+        .section-lead {
+            color: var(--muted);
+            margin-top: 20px;
+            margin-bottom: 0;
+            line-height: 1.75;
+        }
+
+        /* Highlight box */
+        .highlight-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--secondary);
+            border-radius: 8px;
+            padding: 24px 28px;
+            margin-top: 28px;
+        }
+        .highlight-box p { color: var(--muted); margin: 0; line-height: 1.75; }
+
+        /* Research question callout */
+        .callout {
+            background: linear-gradient(135deg, rgba(37,99,235,0.06) 0%, rgba(16,185,129,0.06) 100%);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--accent);
+            border-radius: 8px;
+            padding: 24px 28px;
+            margin-top: 28px;
+        }
+        .callout p { color: var(--text); margin: 0; line-height: 1.75; font-style: italic; font-size: 1.05rem; }
+
+        /* Architecture diagram block */
+        .arch-diagram {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 32px 40px;
+            margin-top: 28px;
+            font-family: 'Poppins', monospace;
+            font-size: 0.9rem;
+            color: var(--muted);
+            line-height: 2;
+            text-align: center;
+        }
+        .arch-diagram .arch-node {
+            display: inline-block;
+            padding: 6px 18px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        .arch-diagram .node-internet  { background: rgba(37,99,235,0.1);  color: var(--secondary); border: 1px solid rgba(37,99,235,0.25); }
+        .arch-diagram .node-gateway   { background: rgba(16,185,129,0.1); color: var(--accent);    border: 1px solid rgba(16,185,129,0.25); }
+        .arch-diagram .node-network   { background: rgba(124,58,237,0.1); color: var(--primary);   border: 1px solid rgba(124,58,237,0.25); }
+        .arch-diagram .node-server    { background: rgba(37,99,235,0.08); color: var(--secondary); border: 1px solid rgba(37,99,235,0.2);  }
+        .arch-diagram .node-service   { background: rgba(16,185,129,0.08);color: var(--accent);    border: 1px solid rgba(16,185,129,0.2);  }
+        .arch-diagram .arch-arrow     { color: var(--muted); display: block; }
+        .arch-diagram .arch-branch    { display: flex; justify-content: center; gap: 24px; margin-top: 4px; }
+
+        /* Service detail cards */
+        .service-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 28px;
+            margin-top: 28px;
+        }
+        .service-card h5 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .service-card h5 i { color: var(--secondary); font-size: 14px; }
+        .service-card p { color: var(--muted); font-size: 0.9rem; line-height: 1.75; margin: 0; }
+
+        /* Finding items */
+        .finding-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .finding-item:last-child { border-bottom: none; }
+        .finding-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            margin-top: 6px;
+            flex-shrink: 0;
+        }
+        .dot-blue  { background-color: var(--secondary); }
+        .dot-green { background-color: var(--accent); }
+        .dot-purple { background-color: var(--primary); }
+        .finding-item p { margin: 0; color: var(--muted); font-size: 0.925rem; line-height: 1.65; }
+        .finding-item strong { color: var(--text); }
+
+        /* Takeaways */
+        .takeaway-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 28px;
+        }
+        @media (max-width: 992px) { .takeaway-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 576px) { .takeaway-grid { grid-template-columns: 1fr; } }
+
+        .takeaway-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 18px 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .takeaway-item i { color: var(--secondary); font-size: 14px; flex-shrink: 0; }
+
+        /* CTA banner */
+        .cta-banner {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 40px 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-top: 60px;
+            margin-bottom: 60px;
+        }
+        .cta-banner h4 { margin: 0 0 6px; font-size: 1.2rem; color: var(--text); }
+        .cta-banner p  { margin: 0; color: var(--muted); font-size: 0.9rem; }
+
+        .btn-primary-custom {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            padding: 11px 26px;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: var(--primary);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+        .btn-primary-custom:hover {
+            background-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(124,58,237,0.35);
+            color: #FFFFFF;
+        }
+
+        .btn-outline-custom {
+            border: 2px solid var(--border);
+            color: var(--text);
+            background: transparent;
+            padding: 11px 26px;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+        .btn-outline-custom:hover {
+            border-color: var(--secondary);
+            color: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--surface-2);
+            color: var(--text);
+            padding: 30px 0;
+            border-top: 1px solid var(--border);
+        }
+        .social-icons a {
+            color: var(--text);
+            font-size: 18px;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+        .social-icons a:hover { color: var(--primary); }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 20px; right: 20px;
+            width: 48px; height: 48px;
+            background-color: var(--primary);
+            color: #FFFFFF;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            text-decoration: none;
+            opacity: 0; visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+        .back-to-top.active { opacity: 1; visibility: visible; }
+        .back-to-top:hover {
+            background-color: var(--surface-2);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .text-muted { color: var(--muted) !important; }
+        .bg-light { background-color: var(--surface-2) !important; }
+
+        @media (max-width: 768px) {
+            .project-title { font-size: 1.9rem; }
+            .cta-banner { padding: 28px 24px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">Jesus Perez</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#skills">Skills</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#projects">Projects</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#experience">Experience</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#certificates">Certificates</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#contact">Contact</a></li>
+                </ul>
+            </div>
+            <button id="theme-toggle" aria-label="Toggle dark mode">
+                <i class="fas fa-moon" id="theme-icon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Page Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <a href="index.html#projects" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Projects
+            </a>
+
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <span class="tag tag-accent">Cloud Infrastructure</span>
+                <span class="tag tag-secondary">Amazon Web Services</span>
+                <span class="tag tag-secondary">Networking</span>
+                <span class="tag tag-primary">Linux · EC2</span>
+            </div>
+
+            <h1 class="project-title">AWS Cloud Infrastructure &amp;<br>Web Server Deployment</h1>
+            <p class="project-subtitle">Cloud Computing Project — Amazon Web Services</p>
+
+            <!-- Hero Image -->
+            <div style="margin-top: 36px;">
+                <img src="img/AWS/WebServer.png" alt="Deployed AWS web server running in browser"
+                     style="max-width: 760px; width: 100%; border-radius: 10px; border: 1px solid var(--border); display: block;">
+            </div>
+
+            <div class="meta-bar">
+                <div class="meta-item">
+                    <span class="meta-label">Type</span>
+                    <span class="meta-value">Cloud Infrastructure Project</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Platform</span>
+                    <span class="meta-value">Amazon Web Services</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Services</span>
+                    <span class="meta-value">VPC · EC2 · S3 · IAM · CloudWatch · Security Groups</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Project Overview -->
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-heading">Project Overview</h2>
+            <p class="section-lead">
+                This project focused on designing and deploying a functional cloud-based web server environment using Amazon Web Services. The goal was to build a small but complete cloud infrastructure setup that demonstrated networking, compute, security, monitoring, and backup fundamentals.
+            </p>
+            <p class="section-lead mt-3">
+                I created a custom VPC, configured a public subnet, connected the network to the internet through an Internet Gateway, launched a Linux EC2 instance, hosted a basic web page, secured access with security groups and IAM, monitored server activity with CloudWatch, and backed up website files to Amazon S3 using the AWS CLI.
+            </p>
+
+            <!-- EC2 Instance Supporting Image -->
+            <div style="margin-top: 36px;">
+                <p style="font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px;">EC2 Instance — Running</p>
+                <img src="img/AWS/EC2.png" alt="EC2 instance running in AWS console"
+                     style="max-width: 760px; width: 100%; border-radius: 10px; border: 1px solid var(--border); display: block;">
+            </div>
+        </div>
+    </section>
+
+    <!-- The Problem -->
+    <section class="content-section bg-light">
+        <div class="container">
+            <h2 class="section-heading">The Problem</h2>
+            <div class="highlight-box">
+                <p>
+                    Cloud applications require more than just a server. They need a properly designed network, controlled access, monitoring, and a backup strategy. The challenge was to understand how different AWS services work together to support a secure and accessible web server environment.
+                </p>
+            </div>
+
+            <div class="callout mt-4">
+                <p><strong style="color: var(--text); font-style: normal;">Core Question —</strong> How can AWS services be combined to deploy, secure, monitor, and protect a basic cloud-hosted web server?</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- My Approach -->
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-heading">My Approach</h2>
+            <p class="section-lead">
+                I started by creating the network foundation using a custom VPC. Within that VPC, I created a public subnet to host the EC2 instance. I then configured a route table and attached an Internet Gateway so the server could communicate with the public internet.
+            </p>
+            <p class="section-lead mt-3">
+                After the network was configured, I launched a Linux EC2 instance and installed a web server. I deployed a basic HTML page and verified that the server was reachable through its public IP address.
+            </p>
+            <p class="section-lead mt-3">
+                To secure the environment, I configured security group rules to allow only the necessary types of traffic, such as HTTP for web access and SSH for remote administration. I also attached an IAM role to the EC2 instance to support secure access to AWS services without storing credentials directly on the server. Finally, I used CloudWatch to monitor performance metrics and Amazon S3 to store backup copies of the web server files.
+            </p>
+
+            <!-- Architecture Diagram -->
+            <div class="arch-diagram">
+                <span class="arch-node node-internet">Internet</span>
+                <span class="arch-arrow">│</span>
+                <span class="arch-node node-gateway">Internet Gateway</span>
+                <span class="arch-arrow">│</span>
+                <span class="arch-node node-network">Route Table</span>
+                <span class="arch-arrow">│</span>
+                <span class="arch-node node-network">Public Subnet</span>
+                <span class="arch-arrow">│</span>
+                <span class="arch-node node-server">EC2 Web Server</span>
+                <div class="arch-branch" style="margin-top: 12px;">
+                    <span class="arch-node node-service">CloudWatch</span>
+                    <span class="arch-node node-service">S3 Backup</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Building the Network Foundation -->
+    <section class="content-section bg-light">
+        <div class="container">
+            <h2 class="section-heading">Building the Network Foundation</h2>
+
+            <!-- VPC -->
+            <div class="row align-items-start g-4 mt-2">
+                <div class="col-md-6">
+                    <div class="service-card" style="margin-top: 0;">
+                        <h5><i class="fas fa-network-wired"></i> Amazon VPC</h5>
+                        <p>
+                            The VPC acted as the private network environment for the project. It allowed me to control where resources were placed and how traffic moved between the server and the internet. This was the first step in building an isolated, configurable cloud network.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <p style="font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px;">VPC Configuration</p>
+                    <img src="img/AWS/VPC.png" alt="Custom VPC configuration in AWS console"
+                         style="width: 100%; border-radius: 8px; border: 1px solid var(--border);">
+                </div>
+            </div>
+
+            <!-- Public Subnet -->
+            <div class="row align-items-start g-4 mt-4">
+                <div class="col-md-6">
+                    <div class="service-card" style="margin-top: 0;">
+                        <h5><i class="fas fa-table-cells-large"></i> Public Subnet</h5>
+                        <p>
+                            The public subnet hosted the EC2 instance and allowed the server to be accessible from a browser through a public IP address. Placing the instance in a public subnet was a deliberate design decision that enabled direct internet connectivity.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <p style="font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px;">Public Subnet</p>
+                    <img src="img/AWS/Subnet.png" alt="Public subnet configured within the VPC"
+                         style="width: 100%; border-radius: 8px; border: 1px solid var(--border);">
+                </div>
+            </div>
+
+            <!-- Internet Gateway -->
+            <div class="row align-items-start g-4 mt-4">
+                <div class="col-md-6">
+                    <div class="service-card" style="margin-top: 0;">
+                        <h5><i class="fas fa-globe"></i> Internet Gateway</h5>
+                        <p>
+                            The Internet Gateway connected the VPC to the public internet. Without it, the EC2 instance would remain isolated with no path to or from the outside world. Attaching the gateway to the VPC was what made the web server publicly reachable.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <p style="font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px;">Internet Gateway</p>
+                    <img src="img/AWS/IGW.png" alt="Internet Gateway attached to the VPC"
+                         style="width: 100%; border-radius: 8px; border: 1px solid var(--border);">
+                </div>
+            </div>
+
+            <!-- Route Table -->
+            <div class="row align-items-start g-4 mt-4">
+                <div class="col-md-6">
+                    <div class="service-card" style="margin-top: 0;">
+                        <h5><i class="fas fa-route"></i> Route Table</h5>
+                        <p>
+                            The route table directed outbound and inbound traffic between the public subnet and the Internet Gateway. Configuring the correct routes was essential to ensure traffic flowed properly from the EC2 instance to the internet and back.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <p style="font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px;">Routing Configuration</p>
+                    <img src="img/AWS/Route.png" alt="Route table directing traffic to the Internet Gateway"
+                         style="width: 100%; border-radius: 8px; border: 1px solid var(--border);">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deploying the Server -->
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-heading">Deploying the Server</h2>
+
+            <!-- EC2 -->
+            <div class="row align-items-start g-4 mt-2">
+                <div class="col-md-6">
+                    <div class="service-card" style="margin-top: 0;">
+                        <h5><i class="fas fa-server"></i> Amazon EC2</h5>
+                        <p>
+                            The EC2 instance served as the Linux-based web server. After launching the instance into the public subnet, I installed a web server, deployed a basic HTML page, and confirmed the site was reachable by navigating to the instance's public IP address in a browser.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <p style="font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px;">EC2 Instance</p>
+                    <img src="img/AWS/EC2.png" alt="EC2 Linux web server instance in AWS console"
+                         style="width: 100%; border-radius: 8px; border: 1px solid var(--border);">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Security Controls -->
+    <section class="content-section bg-light">
+        <div class="container">
+            <h2 class="section-heading">Security Controls</h2>
+
+            <!-- Security Groups -->
+            <div class="row align-items-start g-4 mt-2">
+                <div class="col-md-4">
+                    <div class="service-card" style="margin-top: 0;">
+                        <h5><i class="fas fa-shield-halved"></i> Security Groups</h5>
+                        <p>
+                            Security groups worked as a virtual firewall for the EC2 instance. I configured inbound rules to allow only the traffic needed for the project:
+                        </p>
+                        <ul style="color: var(--muted); font-size: 0.9rem; margin-top: 10px; line-height: 2;">
+                            <li><strong style="color: var(--text);">HTTP port 80</strong> — allows web browser access to the hosted page</li>
+                            <li><strong style="color: var(--text);">SSH port 22</strong> — allows secure remote administration of the server</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <p style="font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px;">Security Group Rules</p>
+                    <img src="img/AWS/SecurityGroup.png" alt="Security group inbound rules for the EC2 instance"
+                         style="width: 100%; border-radius: 8px; border: 1px solid var(--border);">
+                </div>
+            </div>
+
+            <!-- IAM Role -->
+            <div class="row align-items-start g-4 mt-4">
+                <div class="col-md-6">
+                    <div class="service-card" style="margin-top: 0;">
+                        <h5><i class="fas fa-id-badge"></i> IAM Role</h5>
+                        <p>
+                            I attached an IAM role to the EC2 instance to allow it to securely interact with other AWS services — specifically S3 — without storing access keys directly on the server. This follows AWS best practices for managing permissions in a cloud environment.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <p style="font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px;">IAM Role Attached to EC2</p>
+                    <img src="img/AWS/IAMRole.png" alt="IAM role attached to the EC2 instance"
+                         style="max-width: 360px; width: 100%; border-radius: 8px; border: 1px solid var(--border);">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Monitoring & Operations -->
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-heading">Monitoring &amp; Operations</h2>
+
+            <div class="row align-items-start g-4 mt-2">
+                <div class="col-md-6">
+                    <div class="service-card" style="margin-top: 0;">
+                        <h5><i class="fas fa-chart-line"></i> Amazon CloudWatch</h5>
+                        <p>
+                            CloudWatch was used to monitor real-time server metrics, giving visibility into how the EC2 instance was performing:
+                        </p>
+                        <ul style="color: var(--muted); font-size: 0.9rem; margin-top: 10px; line-height: 2;">
+                            <li><strong style="color: var(--text);">CPU Utilization</strong> — tracked processor load over time</li>
+                            <li><strong style="color: var(--text);">Network In</strong> — measured inbound traffic to the instance</li>
+                            <li><strong style="color: var(--text);">Network Out</strong> — measured outbound traffic from the instance</li>
+                        </ul>
+                        <p style="margin-top: 12px;">
+                            This gave the deployment a real-world operational layer beyond simply launching a server.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <p style="font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px;">CloudWatch Metrics</p>
+                    <img src="img/AWS/CloudWatch.png" alt="CloudWatch monitoring metrics for the EC2 instance"
+                         style="width: 100%; border-radius: 8px; border: 1px solid var(--border);">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Backup & Data Protection -->
+    <section class="content-section bg-light">
+        <div class="container">
+            <h2 class="section-heading">Backup &amp; Data Protection</h2>
+
+            <!-- S3 Bucket -->
+            <div class="row align-items-start g-4 mt-2">
+                <div class="col-md-6">
+                    <div class="service-card" style="margin-top: 0;">
+                        <h5><i class="fas fa-bucket"></i> Amazon S3</h5>
+                        <p>
+                            S3 was used as a backup location for the web server files. An S3 bucket was created to serve as a durable, off-server storage destination for the website content — ensuring the files would be recoverable independent of the EC2 instance.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <p style="font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px;">S3 Backup Bucket</p>
+                    <img src="img/AWS/S3Bucket.png" alt="Amazon S3 bucket used for web server file backups"
+                         style="width: 100%; border-radius: 8px; border: 1px solid var(--border);">
+                </div>
+            </div>
+
+            <!-- AWS CLI Backup -->
+            <div class="row align-items-start g-4 mt-4">
+                <div class="col-md-6">
+                    <div class="service-card" style="margin-top: 0;">
+                        <h5><i class="fas fa-terminal"></i> AWS CLI Backup Process</h5>
+                        <p>
+                            Using the AWS CLI from within the EC2 instance, I copied the website's <code style="background: var(--surface-2); border-radius: 4px; padding: 1px 6px; font-size: 0.85em; color: var(--secondary);">index.html</code> file directly into the S3 bucket:
+                        </p>
+                        <pre style="background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; font-size: 0.82rem; color: var(--secondary); margin-top: 14px; overflow-x: auto; white-space: pre-wrap; word-break: break-all;">aws s3 cp /var/www/html/index.html s3://&lt;bucket-name&gt;/</pre>
+                        <p style="margin-top: 12px;">
+                            This step proved interaction with AWS beyond the console and demonstrated how the IAM role enabled CLI-based service access securely.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <p style="font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px;">AWS CLI Backup Command</p>
+                    <img src="img/AWS/AWSCLI-Backup.png" alt="AWS CLI command copying index.html to S3 bucket"
+                         style="width: 100%; border-radius: 8px; border: 1px solid var(--border);">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final Result -->
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-heading">Final Result</h2>
+            <p class="section-lead">
+                Successfully deployed a cloud-hosted Linux web server with networking, security, monitoring, and backup functionality using AWS.
+            </p>
+            <p class="section-lead mt-3">
+                The final result was a working AWS cloud environment with a publicly accessible web server. The project demonstrated how core AWS services work together to support a real deployment — this was more than simply launching an EC2 instance. It showed how cloud infrastructure needs to be designed as a connected system.
+            </p>
+
+            <div style="margin-top: 36px;">
+                <p style="font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px;">Live Web Server</p>
+                <img src="img/AWS/WebServer.png" alt="Deployed web server accessible via public IP address"
+                     style="max-width: 760px; width: 100%; border-radius: 10px; border: 1px solid var(--border); display: block;">
+            </div>
+
+            <div style="margin-top: 28px;">
+                <div class="finding-item">
+                    <div class="finding-dot dot-blue"></div>
+                    <p><strong>Networking</strong> — Built a complete VPC with public subnet, Internet Gateway, and route table to connect the server to the internet.</p>
+                </div>
+                <div class="finding-item">
+                    <div class="finding-dot dot-green"></div>
+                    <p><strong>Security</strong> — Configured security group rules and attached an IAM role to control traffic and permissions without exposing credentials.</p>
+                </div>
+                <div class="finding-item">
+                    <div class="finding-dot dot-purple"></div>
+                    <p><strong>Monitoring</strong> — Used CloudWatch to observe real-time CPU and network metrics, adding operational visibility to the deployment.</p>
+                </div>
+                <div class="finding-item">
+                    <div class="finding-dot dot-blue"></div>
+                    <p><strong>Backup</strong> — Backed up web server files to S3 using the AWS CLI, demonstrating CLI-based interaction with AWS services.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- What I Learned -->
+    <section class="content-section bg-light">
+        <div class="container">
+            <h2 class="section-heading">What I Learned</h2>
+            <p class="section-lead">
+                This project gave me practical experience with AWS cloud infrastructure fundamentals and helped me understand how to move from individual cloud services to a complete working environment that supports deployment, security, monitoring, and backup.
+            </p>
+
+            <div class="takeaway-grid">
+                <div class="takeaway-item"><i class="fas fa-check"></i> VPC & Subnet Design</div>
+                <div class="takeaway-item"><i class="fas fa-check"></i> Internet Gateway & Routing</div>
+                <div class="takeaway-item"><i class="fas fa-check"></i> EC2 Linux Web Server</div>
+                <div class="takeaway-item"><i class="fas fa-check"></i> Security Group Rules</div>
+                <div class="takeaway-item"><i class="fas fa-check"></i> IAM Role Management</div>
+                <div class="takeaway-item"><i class="fas fa-check"></i> CloudWatch Monitoring</div>
+                <div class="takeaway-item"><i class="fas fa-check"></i> S3 Backup Storage</div>
+                <div class="takeaway-item"><i class="fas fa-check"></i> AWS CLI Operations</div>
+                <div class="takeaway-item"><i class="fas fa-check"></i> End-to-End Cloud Deployment</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Banner -->
+    <div class="container">
+        <div class="cta-banner">
+            <div>
+                <h4>Explore More Projects</h4>
+                <p>View the full portfolio to see other cloud, data, and analytics projects.</p>
+            </div>
+            <div class="d-flex flex-wrap gap-3">
+                <a href="index.html#projects" class="btn-outline-custom">
+                    <i class="fas fa-arrow-left"></i> All Projects
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="container">
+            <div class="social-icons mb-3">
+                <a href="http://www.linkedin.com/in/jesus-perez-8a228b192" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                <a href="https://github.com/JpHolding1" target="_blank"><i class="fab fa-github"></i></a>
+                <a href="mailto:Jesusperez36070@gmail.com"><i class="fas fa-envelope"></i></a>
+            </div>
+            <p class="mb-0" style="font-size: 0.875rem;">&copy; <span id="year"></span> Jesus Perez. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <a href="#" class="back-to-top"><i class="fas fa-arrow-up"></i></a>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        window.addEventListener('scroll', () => {
+            document.querySelector('.navbar').classList.toggle('scrolled', window.pageYOffset > 50);
+            document.querySelector('.back-to-top').classList.toggle('active', window.pageYOffset > 300);
+        });
+
+        // Dark mode
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon   = document.getElementById('theme-icon');
+        const html        = document.documentElement;
+
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        if (savedTheme === 'dark') {
+            html.setAttribute('data-theme', 'dark');
+            themeIcon.classList.replace('fa-moon', 'fa-sun');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+                html.removeAttribute('data-theme');
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+    </script>
+</body>
+</html>
