@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Company Atlas — Interactive AI Industry Intelligence Platform | Jesus Perez</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background: #FAFAF8;
+            --surface: #F3F2EE;
+            --surface-2: #E9E8E3;
+            --primary: #5B21B6;
+            --primary-light: #7C3AED;
+            --secondary: #1D4ED8;
+            --accent: #047857;
+            --text: #111111;
+            --muted: #6B7280;
+            --border: #E2E1DD;
+            --navbar-bg-rgb: 250, 250, 248;
+            --glow: rgba(91, 33, 182, 0.14);
+        }
+
+        [data-theme="dark"] {
+            --background: #07070E;
+            --surface: #0E0E1A;
+            --surface-2: #151524;
+            --primary: #A78BFA;
+            --primary-light: #C4B5FD;
+            --secondary: #60A5FA;
+            --accent: #34D399;
+            --text: #F0F0F8;
+            --muted: #9CA3AF;
+            --border: #1C1C2E;
+            --navbar-bg-rgb: 7, 7, 14;
+            --glow: rgba(167, 139, 250, 0.15);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            background-color: var(--background);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Fraunces', serif;
+            letter-spacing: -0.02em;
+        }
+
+        /* ── Navbar ── */
+        .navbar {
+            background-color: rgba(var(--navbar-bg-rgb), 0.88);
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: box-shadow 0.3s ease, background-color 0.3s ease;
+        }
+        .navbar.scrolled { box-shadow: 0 4px 24px rgba(0,0,0,0.07); }
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--primary) !important;
+            font-family: 'Fraunces', serif;
+            letter-spacing: -0.04em;
+        }
+        .nav-link {
+            font-weight: 500;
+            font-size: 0.85rem;
+            margin: 0 8px;
+            color: var(--muted) !important;
+            transition: color 0.2s ease;
+            position: relative;
+            padding-bottom: 4px !important;
+        }
+        .nav-link:hover { color: var(--text) !important; }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0; height: 1.5px;
+            bottom: 0; left: 0;
+            background: var(--primary);
+            transition: width 0.25s ease;
+        }
+        .nav-link:hover::after { width: 100%; }
+
+        #theme-toggle {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 8px;
+            width: 36px; height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-left: 14px;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+        #theme-toggle:hover { border-color: var(--primary); color: var(--primary); }
+
+        [data-theme="dark"] .navbar { background-color: rgba(7,7,14,0.88) !important; }
+        [data-theme="dark"] .navbar-toggler { border-color: var(--border); }
+        [data-theme="dark"] .navbar-toggler-icon { filter: invert(1); }
+
+        /* ── Hero / Page Header ── */
+        .page-hero {
+            background: linear-gradient(135deg, var(--background) 0%, var(--surface) 100%);
+            padding: 130px 0 70px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 28px;
+            transition: color 0.2s ease;
+        }
+
+        .back-link:hover { color: var(--primary); }
+
+        .project-title {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 12px;
+            line-height: 1.15;
+        }
+
+        .project-subtitle {
+            color: var(--muted);
+            font-size: 1.05rem;
+            margin-bottom: 28px;
+        }
+
+        /* Tags */
+        .tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            letter-spacing: 0.02em;
+        }
+
+        .tag-primary {
+            background: rgba(124, 58, 237, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(124, 58, 237, 0.2);
+        }
+
+        .tag-secondary {
+            background: rgba(37, 99, 235, 0.08);
+            color: var(--secondary);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+        }
+
+        .tag-accent {
+            background: rgba(16, 185, 129, 0.08);
+            color: var(--accent);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        [data-theme="dark"] .tag-primary {
+            background: rgba(139, 92, 246, 0.15);
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+
+        [data-theme="dark"] .tag-secondary {
+            background: rgba(96, 165, 250, 0.1);
+            border-color: rgba(96, 165, 250, 0.25);
+        }
+
+        [data-theme="dark"] .tag-accent {
+            background: rgba(52, 211, 153, 0.1);
+            border-color: rgba(52, 211, 153, 0.25);
+        }
+
+        /* ── Meta bar ── */
+        .meta-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            padding: 20px 24px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-top: 32px;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .meta-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+        }
+
+        .meta-value {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        /* ── Hero actions ── */
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-top: 28px;
+        }
+
+        /* ── Content sections ── */
+        .content-section {
+            padding: 60px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .content-section:last-of-type { border-bottom: none; }
+
+        .section-heading {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-heading::after {
+            content: '';
+            position: absolute;
+            width: 40%;
+            height: 3px;
+            background-color: var(--secondary);
+            bottom: -8px;
+            left: 0;
+        }
+
+        .section-lead {
+            color: var(--muted);
+            margin-top: 20px;
+            margin-bottom: 0;
+            line-height: 1.75;
+        }
+
+        /* ── Highlight box ── */
+        .highlight-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--secondary);
+            border-radius: 8px;
+            padding: 24px 28px;
+            margin-top: 28px;
+        }
+
+        .highlight-box p {
+            color: var(--muted);
+            margin: 0;
+            line-height: 1.75;
+        }
+
+        .highlight-box p + p { margin-top: 14px; }
+
+        /* ── Feature cards ── */
+        .feature-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-top: 3px solid var(--border);
+            border-radius: 10px;
+            padding: 24px;
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-top-color: var(--secondary);
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.08);
+            transform: translateY(-4px);
+        }
+
+        .feature-card h5 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            font-size: 0.875rem;
+            color: var(--muted);
+            margin: 0;
+            line-height: 1.65;
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            font-size: 16px;
+        }
+
+        .icon-violet { background: rgba(124,58,237,0.1); color: var(--primary); }
+        .icon-blue   { background: rgba(37,99,235,0.1);  color: var(--secondary); }
+        .icon-green  { background: rgba(16,185,129,0.1); color: var(--accent); }
+
+        [data-theme="dark"] .icon-violet { background: rgba(139,92,246,0.15); }
+        [data-theme="dark"] .icon-blue   { background: rgba(96,165,250,0.12); }
+        [data-theme="dark"] .icon-green  { background: rgba(52,211,153,0.12); }
+
+        /* ── Research / feature list ── */
+        .research-list {
+            list-style: none;
+            padding: 0;
+            margin: 24px 0 0;
+        }
+
+        .research-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 0.925rem;
+        }
+
+        .research-list li:last-child { border-bottom: none; }
+
+        .research-list li i {
+            color: var(--accent);
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+
+        /* ── Contributions / detail list ── */
+        .contrib-list {
+            list-style: none;
+            padding: 0;
+            margin: 24px 0 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .contrib-list { grid-template-columns: 1fr; }
+            .project-title { font-size: 2rem; }
+        }
+
+        .contrib-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            color: var(--muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .contrib-list li i {
+            color: var(--primary);
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+
+        /* ── Takeaways ── */
+        .takeaway-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 28px;
+        }
+
+        @media (max-width: 992px) { .takeaway-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 576px) { .takeaway-grid { grid-template-columns: 1fr; } }
+
+        .takeaway-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 18px 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .takeaway-item i { color: var(--secondary); font-size: 14px; flex-shrink: 0; }
+
+        /* ── Image / screenshot placeholder ── */
+        .diagram-placeholder {
+            background: var(--surface-2);
+            border: 2px dashed var(--border);
+            border-radius: 10px;
+            min-height: 360px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            color: var(--muted);
+            text-align: center;
+            padding: 40px;
+            margin-top: 28px;
+        }
+
+        .diagram-placeholder.placeholder-sm { min-height: 220px; }
+
+        .diagram-placeholder i { font-size: 2.5rem; opacity: 0.4; }
+        .diagram-placeholder p { margin: 0; font-size: 0.875rem; max-width: 480px; }
+        .diagram-placeholder .placeholder-caption {
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            opacity: 0.6;
+        }
+
+        .placeholder-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 28px; }
+        @media (max-width: 768px) { .placeholder-strip { grid-template-columns: 1fr; } }
+
+        /* ── Real screenshots ── */
+        .screenshot {
+            width: 100%;
+            display: block;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+            margin-top: 28px;
+        }
+        .screenshot-thumb {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            object-position: top;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+        .collage-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 28px;
+        }
+        @media (max-width: 768px) { .collage-grid { grid-template-columns: 1fr; } }
+
+        /* ── Code / mono blocks ── */
+        .code-block {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 18px 22px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.82rem;
+            color: var(--text);
+            line-height: 1.7;
+            white-space: pre;
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        /* ── Workflow diagram ── */
+        .workflow-diagram {
+            list-style: none;
+            margin: 28px 0 0;
+            padding: 0;
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 36px;
+        }
+        .workflow-stage {
+            flex: 1 1 0;
+            min-width: 0;
+            position: relative;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 18px 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 8px;
+        }
+        .workflow-stage:not(:last-child)::after {
+            content: '\2192';
+            position: absolute;
+            top: 50%;
+            right: -24px;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: 1.1rem;
+            line-height: 1;
+        }
+        .workflow-stage-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            background: rgba(124,58,237,0.1);
+            color: var(--primary);
+        }
+        [data-theme="dark"] .workflow-stage-icon { background: rgba(139,92,246,0.15); }
+        .workflow-stage-title {
+            font-weight: 700;
+            font-size: 0.82rem;
+            color: var(--text);
+        }
+        .workflow-stage-desc {
+            font-size: 0.76rem;
+            color: var(--muted);
+            line-height: 1.45;
+        }
+        @media (max-width: 900px) {
+            .workflow-diagram { flex-direction: column; gap: 30px; }
+            .workflow-stage:not(:last-child)::after {
+                content: '\2193';
+                top: auto;
+                bottom: -22px;
+                right: 50%;
+                transform: translateX(50%);
+            }
+        }
+
+        /* ── Comparison panel (before/after, design vs prod) ── */
+        .compare-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 28px;
+        }
+        @media (max-width: 768px) { .compare-grid { grid-template-columns: 1fr; } }
+        .compare-col .placeholder-caption-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+            margin-bottom: 10px;
+            display: block;
+            text-align: center;
+        }
+
+        /* ── Stack table ── */
+        .stack-table {
+            width: 100%;
+            margin-top: 24px;
+            border-collapse: collapse;
+        }
+        .stack-table th, .stack-table td {
+            text-align: left;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.875rem;
+        }
+        .stack-table th {
+            color: var(--muted);
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .stack-table td { color: var(--text); }
+
+        /* ── Architecture diagram ── */
+        .arch-diagram {
+            list-style: none;
+            margin: 28px auto 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 30px;
+            max-width: 640px;
+        }
+        .arch-layer { position: relative; }
+        .arch-layer:not(:last-child)::after {
+            content: '\2193';
+            position: absolute;
+            left: 50%;
+            bottom: -22px;
+            transform: translateX(-50%);
+            color: var(--muted);
+            font-size: 1.1rem;
+            line-height: 1;
+        }
+        .arch-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px 20px;
+            transition: border-color 0.2s ease;
+        }
+        .arch-card:hover { border-color: var(--secondary); }
+        .arch-card-title {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--text);
+            margin: 0 0 10px;
+            text-align: center;
+        }
+        .arch-badges {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 6px;
+        }
+        .arch-badges li {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--secondary);
+            background: rgba(37, 99, 235, 0.08);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            border-radius: 4px;
+            padding: 3px 9px;
+        }
+        [data-theme="dark"] .arch-badges li {
+            background: rgba(96, 165, 250, 0.1);
+            border-color: rgba(96, 165, 250, 0.25);
+        }
+        .arch-row {
+            display: flex;
+            gap: 20px;
+        }
+        .arch-row .arch-card { flex: 1 1 0; min-width: 0; }
+        @media (max-width: 700px) {
+            .arch-row { flex-direction: column; gap: 30px; }
+        }
+        .arch-connector { display: flex; justify-content: center; }
+        .arch-connector-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 5px 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .arch-connector-label i { color: var(--accent); font-size: 0.7rem; }
+        @media (prefers-reduced-motion: reduce) {
+            .arch-card { transition: none; }
+        }
+
+        /* ── Route pills ── */
+        .route-pills { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+        .route-pill {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 6px 12px;
+            color: var(--secondary);
+        }
+
+        /* ── CTA banner ── */
+        .cta-banner {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 40px 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-top: 60px;
+            margin-bottom: 60px;
+        }
+
+        .cta-banner h4 { margin: 0 0 6px; font-size: 1.2rem; color: var(--text); }
+        .cta-banner p  { margin: 0; color: var(--muted); font-size: 0.9rem; }
+
+        .btn-primary-custom {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            padding: 11px 26px;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: var(--primary);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .btn-primary-custom:hover {
+            background-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(124,58,237,0.35);
+            color: #FFFFFF;
+        }
+
+        .btn-outline-custom {
+            border: 2px solid var(--border);
+            color: var(--text);
+            background: transparent;
+            padding: 11px 26px;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .btn-outline-custom:hover {
+            border-color: var(--secondary);
+            color: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        /* ── Footer ── */
+        footer {
+            background-color: var(--surface-2);
+            color: var(--text);
+            padding: 30px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .social-icons a {
+            color: var(--text);
+            font-size: 18px;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+
+        .social-icons a:hover {
+            color: var(--primary);
+            transform: translateY(-3px);
+            display: inline-block;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 20px; right: 20px;
+            width: 48px; height: 48px;
+            background-color: var(--primary);
+            color: #FFFFFF;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            text-decoration: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .back-to-top.active { opacity: 1; visibility: visible; }
+
+        .back-to-top:hover {
+            background-color: var(--surface-2);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .text-muted { color: var(--muted) !important; }
+        .bg-light { background-color: var(--surface-2) !important; }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">Jesus Perez</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#skills">Skills</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#projects">Projects</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#experience">Experience</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#certificates">Certificates</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#contact">Contact</a></li>
+                </ul>
+            </div>
+            <button id="theme-toggle" aria-label="Toggle dark mode">
+                <i class="fas fa-moon" id="theme-icon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Page Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <a href="index.html#projects" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Projects
+            </a>
+
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <span class="tag tag-primary">AI-Assisted Development</span>
+                <span class="tag tag-secondary">SaaS Application</span>
+                <span class="tag tag-secondary">Product Design</span>
+                <span class="tag tag-accent">Deployed Application</span>
+            </div>
+
+            <h1 class="project-title">AI Company Atlas</h1>
+            <p class="project-subtitle">An interactive intelligence platform for exploring AI companies, founders, investors, sectors, funding activity, and technical traction.</p>
+
+            <div class="meta-bar">
+                <div class="meta-item">
+                    <span class="meta-label">Type</span>
+                    <span class="meta-value">AI-Assisted SaaS Application</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Role</span>
+                    <span class="meta-value">Product Designer &amp; AI-Assisted Developer</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Tools</span>
+                    <span class="meta-value">Claude Design · Claude Code · Next.js · Supabase · Vercel</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Status</span>
+                    <span class="meta-value">Completed and Deployed</span>
+                </div>
+            </div>
+
+            <div class="hero-actions">
+                <a href="https://ai-company-atlas.vercel.app/" target="_blank" rel="noopener" class="btn-primary-custom">
+                    <i class="fas fa-rocket"></i> Launch Live Application
+                </a>
+                <a href="https://github.com/JpHolding1/ai-company-atlas" target="_blank" rel="noopener" class="btn-outline-custom">
+                    <i class="fab fa-github"></i> View GitHub Repository
+                </a>
+            </div>
+
+            <img src="img/atlas/landing-page.png" alt="AI Company Atlas landing page with hero text, relationship graph, navigation, and main call-to-action" class="screenshot" style="margin-top:40px;">
+        </div>
+    </section>
+
+    <!-- Project Overview -->
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-heading">Project Overview</h2>
+            <p class="section-lead">
+                AI Company Atlas is a deployed web application that presents the AI industry as a connected ecosystem rather than a list of isolated company profiles. Users can browse AI companies, investigate founders and investors, explore relationships in an interactive graph, trace the shortest path between two entities, compare companies, and browse the industry by sector.
+            </p>
+            <p class="section-lead mt-3">
+                I built the project using an AI-assisted workflow from concept through deployment. My responsibilities included product direction, visual design, implementation planning, reviewing generated changes, testing, refinement, and deployment.
+            </p>
+        </div>
+    </section>
+
+    <!-- The Product Opportunity -->
+    <section class="content-section bg-light">
+        <div class="container">
+            <h2 class="section-heading">The Product Opportunity</h2>
+            <p class="section-lead">
+                Information about AI companies is spread across company websites, funding databases, GitHub repositories, model platforms, news articles, and industry reports. Traditional company databases are useful for looking up individual organizations, but they often focus primarily on funding and company profiles — they do not always make the relationships between companies, founders, investors, competitors, and technical activity easy to understand.
+            </p>
+
+            <div class="highlight-box">
+                <p><strong style="color: var(--text);">AI Company Atlas was designed around one question:</strong></p>
+                <p>How could an interactive application make the AI ecosystem easier to explore as a connected network rather than a collection of isolated records?</p>
+            </div>
+
+            <p class="section-lead mt-4">The product helps users investigate questions such as:</p>
+            <ul class="research-list mt-2">
+                <li><i class="fas fa-check"></i><span>How are two companies connected?</span></li>
+                <li><i class="fas fa-check"></i><span>Which investors connect multiple AI companies?</span></li>
+                <li><i class="fas fa-check"></i><span>Which companies operate in the same sector?</span></li>
+                <li><i class="fas fa-check"></i><span>Which companies show technical momentum beyond funding?</span></li>
+            </ul>
+
+            <p class="section-lead mt-4">The product combines company research, ecosystem relationships, and technical-traction signals in one visual experience.</p>
+        </div>
+    </section>
+
+    <!-- Designing the Frontend First -->
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-heading">Designing the Frontend First</h2>
+            <p class="section-lead">
+                I intentionally developed the frontend and interaction model before creating the production backend. Starting with the user experience helped define what the backend actually needed to support.
+            </p>
+
+            <div class="code-block mt-4">Product concept
+    ↓
+Visual direction
+    ↓
+Frontend prototype
+    ↓
+Interaction refinement
+    ↓
+Feature requirements
+    ↓
+Database design
+    ↓
+Production integration</div>
+
+            <p class="section-lead mt-4">Designing the experience first helped define what information the company cards, profiles, graph, comparison tools, and Path Finder needed from the backend.</p>
+
+            <h3 class="section-heading mt-5" style="font-size:1.2rem;">Claude Design Prototype</h3>
+            <p class="section-lead">
+                Before building the production application, I used Claude Design to create and refine the visual system behind AI Company Atlas.
+            </p>
+            <p class="section-lead mt-3">The prototype established:</p>
+            <ul class="research-list mt-2">
+                <li><i class="fas fa-check"></i><span>Visual identity and layout</span></li>
+                <li><i class="fas fa-check"></i><span>Navigation and interface components</span></li>
+                <li><i class="fas fa-check"></i><span>Relationship-graph visual language</span></li>
+                <li><i class="fas fa-check"></i><span>Motion and responsive behavior</span></li>
+            </ul>
+            <p class="section-lead mt-3">The Atlas Graph System also served as a developer handoff, documenting how the graph should look, move, and render before it was implemented in the production application.</p>
+
+            <h4 class="mt-5 mb-0" style="font-size:1.05rem; font-weight:700; color:var(--text);">Atlas Graph System</h4>
+            <img src="img/atlas/design-prototype.png" alt="Atlas Graph System prototype created in Claude Design" class="screenshot">
+            <p class="mt-2" style="font-size: 0.8rem; color: var(--muted);">Claude Design prototype defining the node hierarchy, color language, edge treatment, glow behavior, and Canvas rendering direction for the final product.</p>
+        </div>
+    </section>
+
+    <!-- From Claude Design to Claude Code -->
+    <section class="content-section bg-light">
+        <div class="container">
+            <h2 class="section-heading">From Claude Design to Claude Code</h2>
+            <p class="section-lead">
+                After the visual direction was established, I used Claude Code to convert the prototype into a production application. I did not ask Claude Code to generate the entire project through one broad prompt — I separated the work into controlled phases.
+            </p>
+
+            <ul class="contrib-list mt-4">
+                <li><i class="fas fa-circle-dot" style="font-size: 10px; margin-top: 5px;"></i><span>1. Design system and frontend prototype</span></li>
+                <li><i class="fas fa-circle-dot" style="font-size: 10px; margin-top: 5px;"></i><span>2. Core pages and graph experience</span></li>
+                <li><i class="fas fa-circle-dot" style="font-size: 10px; margin-top: 5px;"></i><span>3. Supabase and API integration</span></li>
+                <li><i class="fas fa-circle-dot" style="font-size: 10px; margin-top: 5px;"></i><span>4. Comparison, sectors, and Path Finder</span></li>
+                <li><i class="fas fa-circle-dot" style="font-size: 10px; margin-top: 5px;"></i><span>5. Testing, auditing, and deployment</span></li>
+            </ul>
+
+            <p class="section-lead mt-4">I gave Claude Code clear visual references, divided the work into reviewable phases, preserved the approved design direction, and tested each stage before continuing.</p>
+
+            <p class="section-lead mt-4">AI accelerated implementation, but I remained responsible for product direction, design approval, testing, prioritization, and final quality.</p>
+
+            <ol class="workflow-diagram" aria-label="Development workflow from initial design to production deployment">
+                <li class="workflow-stage">
+                    <span class="workflow-stage-icon" aria-hidden="true"><i class="fas fa-palette"></i></span>
+                    <span class="workflow-stage-title">Claude Design</span>
+                    <span class="workflow-stage-desc">Visual exploration and product direction</span>
+                </li>
+                <li class="workflow-stage">
+                    <span class="workflow-stage-icon" aria-hidden="true"><i class="fas fa-diagram-project"></i></span>
+                    <span class="workflow-stage-title">Atlas Graph Prototype</span>
+                    <span class="workflow-stage-desc">Visual language, motion, and interaction design</span>
+                </li>
+                <li class="workflow-stage">
+                    <span class="workflow-stage-icon" aria-hidden="true"><i class="fas fa-code"></i></span>
+                    <span class="workflow-stage-title">Claude Code</span>
+                    <span class="workflow-stage-desc">Phased production implementation</span>
+                </li>
+                <li class="workflow-stage">
+                    <span class="workflow-stage-icon" aria-hidden="true"><i class="fas fa-database"></i></span>
+                    <span class="workflow-stage-title">Supabase + APIs</span>
+                    <span class="workflow-stage-desc">PostgreSQL data, GitHub API, and Hugging Face API integration</span>
+                </li>
+                <li class="workflow-stage">
+                    <span class="workflow-stage-icon" aria-hidden="true"><i class="fas fa-clipboard-check"></i></span>
+                    <span class="workflow-stage-title">Testing + Custom Agents</span>
+                    <span class="workflow-stage-desc">Functional testing, production-readiness review, and SEO review</span>
+                </li>
+                <li class="workflow-stage">
+                    <span class="workflow-stage-icon" aria-hidden="true"><i class="fas fa-rocket"></i></span>
+                    <span class="workflow-stage-title">Vercel Deployment</span>
+                    <span class="workflow-stage-desc">Public production application</span>
+                </li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- Core Product Features -->
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-heading">Core Product Features</h2>
+            <p class="section-lead">Six connected experiences make up the product, from company discovery to graph-based exploration.</p>
+
+            <div class="row g-3 mt-2">
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-blue"><i class="fas fa-magnifying-glass"></i></div>
+                        <h5>Company Browser</h5>
+                        <p>Search and browse AI companies by category, funding stage, and key metrics, then open individual company profiles.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-violet"><i class="fas fa-diagram-project"></i></div>
+                        <h5>Interactive Relationship Graph</h5>
+                        <p>An interactive network showing how companies, founders, and investors are connected.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-green"><i class="fas fa-route"></i></div>
+                        <h5>Ecosystem Path Finder</h5>
+                        <p>Finds and explains the shortest connection between two companies, founders, or investors.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-blue"><i class="fas fa-scale-balanced"></i></div>
+                        <h5>Company Comparison</h5>
+                        <p>Compares two companies across funding, size, technical activity, investors, and shared connections.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-violet"><i class="fas fa-layer-group"></i></div>
+                        <h5>AI Sector Explorer</h5>
+                        <p>Groups companies by specialization and helps users explore the AI ecosystem by category.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-green"><i class="fas fa-database"></i></div>
+                        <h5>Technical Traction</h5>
+                        <p>Uses refreshed GitHub and Hugging Face data to highlight repository activity and model adoption while keeping the experience fast and reliable.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top:40px;">
+                <h3 class="section-heading" style="font-size:1.2rem;">Interactive Relationship Graph</h3>
+                <img src="img/atlas/relationship-graph-full.png" alt="Full-width interactive relationship graph showing companies, founders, and investors as a connected network" class="screenshot">
+            </div>
+
+            <div style="margin-top:40px;">
+                <h3 class="section-heading" style="font-size:1.2rem;">Ecosystem Path Finder</h3>
+                <img src="img/atlas/path-finder.png" alt="Ecosystem Path Finder showing a completed shortest-path result" class="screenshot">
+            </div>
+
+            <div style="margin-top:40px;">
+                <h3 class="section-heading" style="font-size:1.2rem;">Company Comparison</h3>
+                <img src="img/atlas/compare.png" alt="AI Company Atlas company comparison page with summary cards and comparison table" class="screenshot">
+            </div>
+
+            <div class="row g-3" style="margin-top:40px;">
+                <div class="col-md-6">
+                    <h3 class="section-heading" style="font-size:1.2rem;">Company Browser</h3>
+                    <img src="img/atlas/company-browser.png" alt="AI Company Atlas company browser with search, filters, and company-card grid" class="screenshot">
+                </div>
+                <div class="col-md-6">
+                    <h3 class="section-heading" style="font-size:1.2rem;">AI Sector Explorer</h3>
+                    <img src="img/atlas/sectors.png" alt="AI Company Atlas sector explorer page" class="screenshot">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture, Tech Stack, and API Integration -->
+    <section class="content-section bg-light">
+        <div class="container">
+            <h2 class="section-heading">Tech Stack, APIs &amp; Product Architecture</h2>
+
+            <table class="stack-table">
+                <thead>
+                    <tr><th>Area</th><th>Tools</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Design</td><td>Claude Design</td></tr>
+                    <tr><td>AI-Assisted Development</td><td>Claude Code</td></tr>
+                    <tr><td>Application</td><td>Next.js, React, TypeScript, Tailwind CSS, Framer Motion</td></tr>
+                    <tr><td>Data</td><td>Supabase, PostgreSQL</td></tr>
+                    <tr><td>Visualization</td><td>Canvas 2D, D3 Force</td></tr>
+                    <tr><td>APIs &amp; Deployment</td><td>GitHub API, Hugging Face API, Git, GitHub, Vercel</td></tr>
+                </tbody>
+            </table>
+
+            <p class="section-lead mt-5">GitHub and Hugging Face APIs provide technical-traction signals such as repository activity and model adoption. Instead of requesting this data whenever a page loads, refreshed metrics are stored in Supabase so the application remains fast and reliable.</p>
+
+            <ol class="arch-diagram mt-4" aria-label="Application architecture: external APIs and the frontend both connect through the application data layer to the Supabase database, which is read back into the frontend through the graph layer, ending in Vercel deployment">
+                <li class="arch-layer">
+                    <div class="arch-card">
+                        <h4 class="arch-card-title">External APIs</h4>
+                        <ul class="arch-badges">
+                            <li>GitHub API</li>
+                            <li>Hugging Face API</li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="arch-layer arch-connector">
+                    <span class="arch-connector-label"><i class="fas fa-clock" aria-hidden="true"></i> Scheduled Refresh</span>
+                </li>
+                <li class="arch-layer">
+                    <div class="arch-card">
+                        <h4 class="arch-card-title">Supabase Database</h4>
+                        <ul class="arch-badges">
+                            <li>PostgreSQL</li>
+                            <li>Companies</li>
+                            <li>Founders</li>
+                            <li>Investors</li>
+                            <li>Funding</li>
+                            <li>Relationships</li>
+                            <li>Metrics</li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="arch-layer">
+                    <div class="arch-card">
+                        <h4 class="arch-card-title">Application Data Layer</h4>
+                        <ul class="arch-badges">
+                            <li>Data Access</li>
+                            <li>Graph Preparation</li>
+                            <li>Cached Metrics</li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="arch-layer">
+                    <div class="arch-row">
+                        <div class="arch-card">
+                            <h4 class="arch-card-title">Frontend</h4>
+                            <ul class="arch-badges">
+                                <li>Next.js</li>
+                                <li>React</li>
+                                <li>TypeScript</li>
+                                <li>Tailwind CSS</li>
+                                <li>Framer Motion</li>
+                            </ul>
+                        </div>
+                        <div class="arch-card">
+                            <h4 class="arch-card-title">Graph Layer</h4>
+                            <ul class="arch-badges">
+                                <li>Canvas 2D</li>
+                                <li>D3 Force</li>
+                                <li>Relationship Graph</li>
+                                <li>Path Finder</li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+                <li class="arch-layer">
+                    <div class="arch-card">
+                        <h4 class="arch-card-title">Deployment</h4>
+                        <ul class="arch-badges">
+                            <li>GitHub</li>
+                            <li>Vercel</li>
+                            <li>Public Production Application</li>
+                        </ul>
+                    </div>
+                </li>
+            </ol>
+            <p class="mt-3 text-center" style="font-size: 0.8rem; color: var(--muted);">External metrics are refreshed and stored in Supabase, while the application reads structured data through the application data layer.</p>
+        </div>
+    </section>
+
+    <!-- Challenges and Iterations -->
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-heading">Challenges &amp; Iterations</h2>
+
+            <h3 class="section-heading mt-4" style="font-size:1.15rem;">Preserving the Design Direction</h3>
+            <p class="section-lead">A key challenge was preventing the production implementation from drifting away from the approved visual direction. I used the prototype as a fixed reference and gave Claude Code focused instructions to preserve the layout, interaction style, and visual identity.</p>
+
+            <h3 class="section-heading mt-5" style="font-size:1.15rem;">Turning the Prototype into a Connected Product</h3>
+            <p class="section-lead">The original prototype was primarily visual. The production version needed connected company, founder, investor, funding, and metric data that could support profiles, comparisons, graph exploration, and Path Finder.</p>
+
+            <h3 class="section-heading mt-5" style="font-size:1.15rem;">Testing and Refinement</h3>
+            <p class="section-lead">The graph and responsive layouts required repeated testing because they combined animation, labels, connections, navigation, and user interaction. I refined performance, spacing, alignment, and mobile behavior through targeted revisions.</p>
+        </div>
+    </section>
+
+    <!-- Testing, Auditing, and Final Result -->
+    <section class="content-section bg-light">
+        <div class="container">
+            <h2 class="section-heading">Testing, Custom Audit Agents &amp; Final Result</h2>
+
+            <h3 class="section-heading mt-4" style="font-size:1.15rem;">Functional Testing</h3>
+            <p class="section-lead">I tested navigation, company discovery, profiles, graph interactions, Path Finder, comparison tools, sector browsing, responsive layouts, and production deployment.</p>
+            <p class="section-lead mt-3">Identified issues were corrected through focused prompts and retesting.</p>
+
+            <h3 class="section-heading mt-5" style="font-size:1.15rem;">Creating Two Specialized Audit Agents</h3>
+            <p class="section-lead">To review the finished application more systematically, I created two custom Claude agents:</p>
+
+            <div class="row g-3 mt-2">
+                <div class="col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-blue"><i class="fas fa-clipboard-check"></i></div>
+                        <h5>Production-Readiness Auditor</h5>
+                        <p>Engineering quality, performance, security, accessibility, and maintainability review.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-green"><i class="fas fa-chart-line"></i></div>
+                        <h5>SEO Auditor</h5>
+                        <p>Metadata, semantic structure, social sharing, sitemap, robots, and crawlability review.</p>
+                    </div>
+                </div>
+            </div>
+
+            <p class="section-lead mt-4">I gave each agent a focused role and persistent project context so it could avoid repeating resolved issues and distinguish intentional decisions from genuine problems.</p>
+            <p class="section-lead mt-3">The agents did not apply changes automatically. I reviewed and prioritized their findings, requested targeted fixes, and retested the application before accepting changes.</p>
+
+            <h3 class="section-heading mt-5" style="font-size:1.15rem;">Final Result</h3>
+            <p class="section-lead">The completed application is publicly accessible and does not require an account.</p>
+            <p class="section-lead mt-3">It includes:</p>
+            <ul class="contrib-list mt-3">
+                <li><i class="fas fa-circle-dot" style="font-size: 10px; margin-top: 5px;"></i><span>Deployed public application</span></li>
+                <li><i class="fas fa-circle-dot" style="font-size: 10px; margin-top: 5px;"></i><span>Searchable company and sector discovery</span></li>
+                <li><i class="fas fa-circle-dot" style="font-size: 10px; margin-top: 5px;"></i><span>Interactive relationship graph and Path Finder</span></li>
+                <li><i class="fas fa-circle-dot" style="font-size: 10px; margin-top: 5px;"></i><span>Company profiles and comparison</span></li>
+                <li><i class="fas fa-circle-dot" style="font-size: 10px; margin-top: 5px;"></i><span>Supabase data with GitHub and Hugging Face API integration</span></li>
+                <li><i class="fas fa-circle-dot" style="font-size: 10px; margin-top: 5px;"></i><span>Custom production-readiness and SEO agents</span></li>
+            </ul>
+            <p class="section-lead mt-4">The final result demonstrates how AI-assisted implementation, custom agents, human review, and a modern product stack can work together in a controlled development workflow.</p>
+
+            <div class="collage-grid">
+                <img src="img/atlas/home-full.png" alt="AI Company Atlas landing page" class="screenshot-thumb">
+                <img src="img/atlas/graph-full.png" alt="AI Company Atlas relationship graph page" class="screenshot-thumb">
+                <img src="img/atlas/companies-full.png" alt="AI Company Atlas company directory page" class="screenshot-thumb">
+            </div>
+        </div>
+    </section>
+
+    <!-- What I Learned -->
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-heading">What I Learned</h2>
+            <p class="section-lead">AI Company Atlas gave me practical experience taking a software product through the complete delivery process.</p>
+
+            <div class="row g-3 mt-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-blue"><i class="fas fa-robot"></i></div>
+                        <h5>AI-Assisted Product Development</h5>
+                        <p>Turning product goals and requirements into clear, reviewable implementation phases.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-violet"><i class="fas fa-drafting-compass"></i></div>
+                        <h5>Product Design and Direction</h5>
+                        <p>Creating a visual system and keeping the production implementation aligned with it.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-green"><i class="fas fa-arrows-left-right"></i></div>
+                        <h5>Full Product Workflow</h5>
+                        <p>Connecting the frontend, backend, APIs, testing, and deployment into one complete product.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-blue"><i class="fas fa-flag-checkered"></i></div>
+                        <h5>Custom AI Agents and Quality Control</h5>
+                        <p>Creating specialized agents while keeping final decisions, prioritization, and approval human-led.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Banner -->
+    <div class="container">
+        <div class="cta-banner">
+            <div>
+                <h4>Explore AI Company Atlas</h4>
+                <p>Open the live platform to browse AI companies, explore the relationship graph, trace ecosystem paths, compare organizations, and discover AI sectors.</p>
+            </div>
+            <div class="d-flex flex-wrap gap-3">
+                <a href="https://ai-company-atlas.vercel.app/" target="_blank" rel="noopener" class="btn-primary-custom">
+                    <i class="fas fa-rocket"></i> Launch Live Application
+                </a>
+                <a href="https://github.com/JpHolding1/ai-company-atlas" target="_blank" rel="noopener" class="btn-outline-custom">
+                    <i class="fab fa-github"></i> View GitHub Repository
+                </a>
+                <a href="index.html#projects" class="btn-outline-custom">
+                    <i class="fas fa-arrow-left"></i> All Projects
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="container">
+            <div class="social-icons mb-3">
+                <a href="http://www.linkedin.com/in/jesus-perez-8a228b192" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                <a href="https://github.com/JpHolding1" target="_blank"><i class="fab fa-github"></i></a>
+                <a href="mailto:Jesusperez36070@gmail.com"><i class="fas fa-envelope"></i></a>
+            </div>
+            <p class="mb-0" style="font-size: 0.875rem;">&copy; <span id="year"></span> Jesus Perez. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <a href="#" class="back-to-top"><i class="fas fa-arrow-up"></i></a>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            document.querySelector('.navbar').classList.toggle('scrolled', window.pageYOffset > 50);
+            document.querySelector('.back-to-top').classList.toggle('active', window.pageYOffset > 300);
+        });
+
+        // Dark mode
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon   = document.getElementById('theme-icon');
+        const html        = document.documentElement;
+
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        if (savedTheme === 'dark') {
+            html.setAttribute('data-theme', 'dark');
+            themeIcon.classList.replace('fa-moon', 'fa-sun');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+                html.removeAttribute('data-theme');
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+    </script>
+</body>
+</html>
