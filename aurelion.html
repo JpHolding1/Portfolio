@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURELION X1 — Interactive 3D Concept-Car Experience | Jesus Perez</title>
+    <meta name="description" content="AURELION X1 is a live, interactive 3D concept-car experience you can rotate, repaint, and explore in the browser — built with React Three Fiber and deployed on Vercel.">
+    <link rel="canonical" href="https://jpholding1.github.io/Portfolio/aurelion.html">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="AURELION X1 — Interactive 3D Concept-Car Experience | Jesus Perez">
+    <meta property="og:description" content="AURELION X1 is a live, interactive 3D concept-car experience you can rotate, repaint, and explore in the browser — built with React Three Fiber and deployed on Vercel.">
+    <meta property="og:image" content="https://jpholding1.github.io/Portfolio/img/aurelion/hero-poster.png">
+    <meta property="og:url" content="https://jpholding1.github.io/Portfolio/aurelion.html">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="AURELION X1 — Interactive 3D Concept-Car Experience | Jesus Perez">
+    <meta name="twitter:description" content="AURELION X1 is a live, interactive 3D concept-car experience you can rotate, repaint, and explore in the browser — built with React Three Fiber and deployed on Vercel.">
+    <meta name="twitter:image" content="https://jpholding1.github.io/Portfolio/img/aurelion/hero-poster.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background: #FAFAF8;
+            --surface: #F3F2EE;
+            --surface-2: #E9E8E3;
+            --primary: #5B21B6;
+            --primary-light: #7C3AED;
+            --secondary: #1D4ED8;
+            --accent: #047857;
+            --text: #111111;
+            --muted: #6B7280;
+            --border: #E2E1DD;
+            --navbar-bg-rgb: 250, 250, 248;
+            --glow: rgba(91, 33, 182, 0.14);
+        }
+
+        [data-theme="dark"] {
+            --background: #07070E;
+            --surface: #0E0E1A;
+            --surface-2: #151524;
+            --primary: #A78BFA;
+            --primary-light: #C4B5FD;
+            --secondary: #60A5FA;
+            --accent: #34D399;
+            --text: #F0F0F8;
+            --muted: #9CA3AF;
+            --border: #1C1C2E;
+            --navbar-bg-rgb: 7, 7, 14;
+            --glow: rgba(167, 139, 250, 0.15);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            background-color: var(--background);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Fraunces', serif;
+            letter-spacing: -0.02em;
+        }
+
+        /* ── Navbar ── */
+        .navbar {
+            background-color: rgba(var(--navbar-bg-rgb), 0.88);
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: box-shadow 0.3s ease, background-color 0.3s ease;
+        }
+        .navbar.scrolled { box-shadow: 0 4px 24px rgba(0,0,0,0.07); }
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--primary) !important;
+            font-family: 'Fraunces', serif;
+            letter-spacing: -0.04em;
+        }
+        .nav-link {
+            font-weight: 500;
+            font-size: 0.85rem;
+            margin: 0 8px;
+            color: var(--muted) !important;
+            transition: color 0.2s ease;
+            position: relative;
+            padding-bottom: 4px !important;
+        }
+        .nav-link:hover { color: var(--text) !important; }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0; height: 1.5px;
+            bottom: 0; left: 0;
+            background: var(--primary);
+            transition: width 0.25s ease;
+        }
+        .nav-link:hover::after { width: 100%; }
+
+        #theme-toggle {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 8px;
+            width: 36px; height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-left: 14px;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+        #theme-toggle:hover { border-color: var(--primary); color: var(--primary); }
+
+        [data-theme="dark"] .navbar { background-color: rgba(7,7,14,0.88) !important; }
+        [data-theme="dark"] .navbar-toggler { border-color: var(--border); }
+        [data-theme="dark"] .navbar-toggler-icon { filter: invert(1); }
+
+        /* ── Hero / Page Header ── */
+        .page-hero {
+            background: linear-gradient(135deg, var(--background) 0%, var(--surface) 100%);
+            padding: 130px 0 70px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 28px;
+            transition: color 0.2s ease;
+        }
+
+        .back-link:hover { color: var(--primary); }
+
+        .project-title {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 12px;
+            line-height: 1.15;
+        }
+
+        .project-subtitle {
+            color: var(--muted);
+            font-size: 1.05rem;
+            margin-bottom: 28px;
+        }
+
+        /* Tags */
+        .tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            letter-spacing: 0.02em;
+        }
+
+        .tag-primary {
+            background: rgba(124, 58, 237, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(124, 58, 237, 0.2);
+        }
+
+        .tag-secondary {
+            background: rgba(37, 99, 235, 0.08);
+            color: var(--secondary);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+        }
+
+        .tag-accent {
+            background: rgba(16, 185, 129, 0.08);
+            color: var(--accent);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        [data-theme="dark"] .tag-primary {
+            background: rgba(139, 92, 246, 0.15);
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+
+        [data-theme="dark"] .tag-secondary {
+            background: rgba(96, 165, 250, 0.1);
+            border-color: rgba(96, 165, 250, 0.25);
+        }
+
+        [data-theme="dark"] .tag-accent {
+            background: rgba(52, 211, 153, 0.1);
+            border-color: rgba(52, 211, 153, 0.25);
+        }
+
+        /* ── Meta bar ── */
+        .meta-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            padding: 20px 24px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-top: 32px;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .meta-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+        }
+
+        .meta-value {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        /* ── Hero actions ── */
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-top: 28px;
+        }
+
+        /* ── Content sections ── */
+        .content-section {
+            padding: 60px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .content-section:last-of-type { border-bottom: none; }
+
+        .section-heading {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-heading::after {
+            content: '';
+            position: absolute;
+            width: 40%;
+            height: 3px;
+            background-color: var(--secondary);
+            bottom: -8px;
+            left: 0;
+        }
+
+        .section-lead {
+            color: var(--muted);
+            margin-top: 20px;
+            margin-bottom: 0;
+            line-height: 1.75;
+        }
+
+        /* ── Highlight box ── */
+        .highlight-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--secondary);
+            border-radius: 8px;
+            padding: 24px 28px;
+            margin-top: 28px;
+        }
+
+        .highlight-box p {
+            color: var(--muted);
+            margin: 0;
+            line-height: 1.75;
+        }
+
+        .highlight-box p + p { margin-top: 14px; }
+
+        /* ── Feature cards ── */
+        .feature-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-top: 3px solid var(--border);
+            border-radius: 10px;
+            padding: 24px;
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-top-color: var(--secondary);
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.08);
+            transform: translateY(-4px);
+        }
+
+        .feature-card h5 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            font-size: 0.875rem;
+            color: var(--muted);
+            margin: 0;
+            line-height: 1.65;
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            font-size: 16px;
+        }
+
+        .icon-violet { background: rgba(124,58,237,0.1); color: var(--primary); }
+        .icon-blue   { background: rgba(37,99,235,0.1);  color: var(--secondary); }
+        .icon-green  { background: rgba(16,185,129,0.1); color: var(--accent); }
+
+        [data-theme="dark"] .icon-violet { background: rgba(139,92,246,0.15); }
+        [data-theme="dark"] .icon-blue   { background: rgba(96,165,250,0.12); }
+        [data-theme="dark"] .icon-green  { background: rgba(52,211,153,0.12); }
+
+        /* ── Research / feature list ── */
+        .research-list {
+            list-style: none;
+            padding: 0;
+            margin: 24px 0 0;
+        }
+
+        .research-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 0.925rem;
+        }
+
+        .research-list li:last-child { border-bottom: none; }
+
+        .research-list li i {
+            color: var(--accent);
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+
+        /* ── Contributions / detail list ── */
+        .contrib-list {
+            list-style: none;
+            padding: 0;
+            margin: 24px 0 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .contrib-list { grid-template-columns: 1fr; }
+            .project-title { font-size: 2rem; }
+        }
+
+        .contrib-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            color: var(--muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .contrib-list li i {
+            color: var(--primary);
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+
+        /* ── Takeaways ── */
+        .takeaway-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 28px;
+        }
+
+        @media (max-width: 992px) { .takeaway-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 576px) { .takeaway-grid { grid-template-columns: 1fr; } }
+
+        .takeaway-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 18px 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .takeaway-item i { color: var(--secondary); font-size: 14px; flex-shrink: 0; }
+
+        /* ── Real screenshots ── */
+        .screenshot {
+            width: 100%;
+            display: block;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+            margin-top: 28px;
+        }
+        .screenshot-thumb {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            object-position: top;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+        .collage-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 28px;
+        }
+        @media (max-width: 768px) { .collage-grid { grid-template-columns: 1fr; } }
+
+        /* ── Stack table ── */
+        .stack-table {
+            width: 100%;
+            margin-top: 24px;
+            border-collapse: collapse;
+        }
+        .stack-table th, .stack-table td {
+            text-align: left;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.875rem;
+        }
+        .stack-table th {
+            color: var(--muted);
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .stack-table td { color: var(--text); }
+        .stack-table code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.82rem;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 1px 6px;
+            color: var(--secondary);
+        }
+
+        /* ── CTA banner ── */
+        .cta-banner {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 40px 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-top: 60px;
+            margin-bottom: 60px;
+        }
+
+        .cta-banner h4 { margin: 0 0 6px; font-size: 1.2rem; color: var(--text); }
+        .cta-banner p  { margin: 0; color: var(--muted); font-size: 0.9rem; }
+
+        .btn-primary-custom {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            padding: 11px 26px;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: var(--primary);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .btn-primary-custom:hover {
+            background-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(124,58,237,0.35);
+            color: #FFFFFF;
+        }
+
+        .btn-outline-custom {
+            border: 2px solid var(--border);
+            color: var(--text);
+            background: transparent;
+            padding: 11px 26px;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .btn-outline-custom:hover {
+            border-color: var(--secondary);
+            color: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        /* ── Footer ── */
+        footer {
+            background-color: var(--surface-2);
+            color: var(--text);
+            padding: 30px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .social-icons a {
+            color: var(--text);
+            font-size: 18px;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+
+        .social-icons a:hover {
+            color: var(--primary);
+            transform: translateY(-3px);
+            display: inline-block;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 20px; right: 20px;
+            width: 48px; height: 48px;
+            background-color: var(--primary);
+            color: #FFFFFF;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            text-decoration: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .back-to-top.active { opacity: 1; visibility: visible; }
+
+        .back-to-top:hover {
+            background-color: var(--surface-2);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .text-muted { color: var(--muted) !important; }
+        .bg-light { background-color: var(--surface-2) !important; }
+
+        /* ── AURELION live interactive hero embed ── */
+        .aurelion-hero-wrap { margin: 40px 0 0; }
+        .aurelion-hero {
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            aspect-ratio: 16 / 10;
+            border-radius: 12px;
+            overflow: hidden;
+            /* Deliberate: this is a product/studio viewport, not page chrome — it stays
+               dark in both light and dark themes so the car reads the same everywhere. */
+            background: #0a0a0a;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+        }
+        .aurelion-hero iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+            display: block;
+        }
+        /* Poster fallback: shown until the iframe paints, and for no-JS visitors. */
+        .aurelion-hero__poster {
+            position: absolute;
+            inset: 0;
+            background: #0a0a0a center / cover no-repeat url("img/aurelion/hero-poster.png");
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-start;
+            text-decoration: none;
+        }
+        .aurelion-hero__poster span {
+            margin: 1.25rem;
+            padding: 0.6rem 1rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            line-height: 1;
+            letter-spacing: 0.04em;
+            color: #fff;
+            background: rgba(20, 20, 20, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 999px;
+        }
+        .aurelion-hero__caption {
+            max-width: 1200px;
+            margin: 12px auto 0;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: var(--muted);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">Jesus Perez</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#skills">Skills</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#projects">Projects</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#experience">Experience</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#certificates">Certificates</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#contact">Contact</a></li>
+                </ul>
+            </div>
+            <button id="theme-toggle" aria-label="Toggle dark mode">
+                <i class="fas fa-moon" id="theme-icon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Page Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <a href="index.html#projects" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Projects
+            </a>
+
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <span class="tag tag-primary">Interactive 3D Experience</span>
+                <span class="tag tag-secondary">React Three Fiber</span>
+                <span class="tag tag-secondary">Product Design</span>
+                <span class="tag tag-accent">Live &amp; Deployed</span>
+            </div>
+
+            <h1 class="project-title">AURELION X1 — Concept One</h1>
+            <p class="project-subtitle">A fictional concept-car reveal you can actually touch — a real 3D vehicle in the browser you can rotate, relight, repaint, and explore. No download, no account, no plugin.</p>
+
+            <div class="meta-bar">
+                <div class="meta-item">
+                    <span class="meta-label">Type</span>
+                    <span class="meta-value">Interactive 3D Product Experience · Personal Build</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Role</span>
+                    <span class="meta-value">Product Direction, Design &amp; Build (AI-Assisted)</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Tools</span>
+                    <span class="meta-value">React Three Fiber · Three.js · Vite · Vercel · Claude Design + Claude Code</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Status</span>
+                    <span class="meta-value">Live</span>
+                </div>
+            </div>
+
+            <div class="hero-actions">
+                <a href="https://aurelion-x1.vercel.app/" target="_blank" rel="noopener" class="btn-primary-custom">
+                    <i class="fas fa-rocket"></i> View Live Experience
+                </a>
+                <a href="https://github.com/JpHolding1/aurelion-x1" target="_blank" rel="noopener" class="btn-outline-custom">
+                    <i class="fab fa-github"></i> View GitHub Repository
+                </a>
+            </div>
+
+            <!-- LIVE HERO: the first "image" of this case study is the real interactive car,
+                 embedded live — not a screenshot. Poster fallback keeps a premium first
+                 frame on slow connections / no-JS. -->
+            <figure class="aurelion-hero-wrap">
+                <div class="aurelion-hero">
+                    <a class="aurelion-hero__poster"
+                       href="https://aurelion-x1.vercel.app/"
+                       target="_blank" rel="noopener">
+                        <span>Open the full experience &nbsp;&rarr;</span>
+                    </a>
+                    <iframe
+                        src="https://aurelion-x1.vercel.app/"
+                        title="AURELION X1 — interactive 3D concept-car configurator"
+                        loading="lazy"
+                        allow="accelerometer; gyroscope; xr-spatial-tracking"
+                        referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+                <figcaption class="aurelion-hero__caption">
+                    Live and interactive &mdash; drag to rotate, switch finishes, and frame the car from any angle.
+                </figcaption>
+            </figure>
+        </div>
+    </section>
+
+    <!-- Overview -->
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-heading">Overview</h2>
+
+            <div class="highlight-box">
+                <p><strong style="color: var(--text);">The first thing you see on this page is the real product.</strong></p>
+                <p>Drag to rotate the car, switch between finishes, and frame it from any angle — it is running live, right here, the same build that ships to production.</p>
+            </div>
+
+            <p class="section-lead">
+                AURELION X1 is a fictional concept-car reveal you can actually touch. Instead of a gallery of rendered stills, it drops a real 3D vehicle into the browser and lets anyone rotate it, relight it, change its paint, and explore how it is engineered — no download, no account, no plugin.
+            </p>
+            <p class="section-lead mt-3">
+                I built it to answer a simple question: what does a modern product page feel like when the product is <em>live</em> rather than photographed? A car is the perfect test case. It is something people already know how to evaluate by walking around it, and it rewards the kind of material detail — deep candy paint, brushed rims, tinted glass, lights that actually switch on — that flat images flatten out.
+            </p>
+            <p class="section-lead mt-3">
+                The result is a functioning configurator, not a mock-up. Everything you interact with is driven by a real 3D model and real materials, wrapped in a calm, editorial interface that stays out of the way.
+            </p>
+
+            <img src="img/aurelion/hero-poster.png" alt="The AURELION X1 in its default front three-quarter hero framing" class="screenshot">
+            <p class="mt-2" style="font-size: 0.8rem; color: var(--muted);">The default &ldquo;hero&rdquo; composition — a front three-quarter view the experience always returns to.</p>
+        </div>
+    </section>
+
+    <!-- The Opportunity -->
+    <section class="content-section bg-light">
+        <div class="container">
+            <h2 class="section-heading">The Opportunity</h2>
+            <p class="section-lead">
+                Most product reveals ask you to trust a photograph. But the things that make a physical product feel premium — how light travels across a surface, how a color shifts as it turns, how the proportions read from the rear versus the side — are exactly the things a fixed image can't show.
+            </p>
+
+            <p class="section-lead mt-4">The questions I wanted a visitor to be able to answer for themselves:</p>
+            <ul class="research-list mt-2">
+                <li><i class="fas fa-check"></i><span>What does this actually look like from the angle I care about?</span></li>
+                <li><i class="fas fa-check"></i><span>How does it change when I put it in a different finish?</span></li>
+                <li><i class="fas fa-check"></i><span>What's underneath the styling — how is it meant to work?</span></li>
+            </ul>
+
+            <p class="section-lead mt-4">A static page can only tell you. An interactive one lets you check.</p>
+        </div>
+    </section>
+
+    <!-- Process -->
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-heading">Process — Frontend-First, With a Human in the Loop</h2>
+            <p class="section-lead">
+                I designed and built the experience frontend-first: the look, the motion, and the interaction model came before anything else, because on a product like this the experience <em>is</em> the product.
+            </p>
+            <p class="section-lead mt-3">
+                The build was AI-assisted. I used Claude Design to shape the visual direction and Claude Code to implement it, moving in small, reviewable steps.
+            </p>
+
+            <div class="highlight-box">
+                <p><strong style="color: var(--text);">AI accelerated the implementation, but I stayed responsible for the product direction, the design calls, the testing, and the final quality bar.</strong> Every interaction was something I decided on, tried in the real app, and either kept or sent back.</p>
+            </div>
+
+            <p class="section-lead mt-4">
+                A concrete example of that oversight: before building the interface, I had the actual 3D asset inspected and validated — its materials, its hierarchy, its orientation, and its camera framing — and kept that validation report in the repo. The interface is built on what the model <em>actually</em> contains, not on assumptions about it. That is why the finishes and lighting are real rather than faked.
+            </p>
+        </div>
+    </section>
+
+    <!-- Core Features -->
+    <section class="content-section bg-light">
+        <div class="container">
+            <h2 class="section-heading">Core Features</h2>
+            <p class="section-lead">A functioning configurator built around real materials, real cameras, and a real 3D model — with an interface anyone can drive.</p>
+
+            <div class="row g-3 mt-2">
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-violet"><i class="fas fa-palette"></i></div>
+                        <h5>Real Material Finishes</h5>
+                        <p>Carmine Candy, Pearly Swirly, and Torched Graphite — genuine finish variants read from the 3D model, not color overlays.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-blue"><i class="fas fa-camera"></i></div>
+                        <h5>A Studio in a Drawer</h5>
+                        <p>Named camera presets — Hero, Front, Rear, Side, Wheel, Cockpit — plus appearance controls for rims, glass tint, interior, and lights.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-green"><i class="fas fa-magnifying-glass-chart"></i></div>
+                        <h5>Engineering Explorer</h5>
+                        <p>Switch to Explore mode for interactive hotspots — aerodynamics, braking, tires, lighting, structure, cockpit — each with a short (fictional) note.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-violet"><i class="fas fa-feather"></i></div>
+                        <h5>Concept Vision</h5>
+                        <p>A quieter scroll section pairing a short design story with three pillars — Form, Finish, and Interaction.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-blue"><i class="fas fa-arrows-rotate"></i></div>
+                        <h5>Controls That Feel Considered</h5>
+                        <p>Drag to orbit, scroll or pinch to frame, Reset View to snap back. Auto-rotation only runs while idle and respects reduced-motion.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-green"><i class="fas fa-shield-halved"></i></div>
+                        <h5>It Never Breaks to a Blank Screen</h5>
+                        <p>If a device can't run 3D or the model is slow to load, the page drops to a static hero with a short explanation instead of nothing.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top:40px;">
+                <h3 class="section-heading" style="font-size:1.2rem;">Real Material Finishes — Not Recolored Pixels</h3>
+                <p class="section-lead">
+                    The finish rail offers three looks. These aren't filters painted over a screenshot — they are the vehicle's own built-in finish variants, read straight from the 3D model and applied to the exact surfaces they belong to. Switching finishes swaps genuine materials, so the reflections and depth change the way real paint would.
+                </p>
+                <div class="collage-grid">
+                    <img src="img/aurelion/finish-carmine.png" alt="AURELION X1 in the Carmine Candy finish" class="screenshot-thumb">
+                    <img src="img/aurelion/finish-pearly.png" alt="AURELION X1 in the Pearly Swirly finish" class="screenshot-thumb">
+                    <img src="img/aurelion/finish-graphite.png" alt="AURELION X1 in the Torched Graphite finish" class="screenshot-thumb">
+                </div>
+                <p class="mt-2" style="font-size: 0.8rem; color: var(--muted);">The same vehicle in all three finishes — Carmine Candy, Pearly Swirly, and Torched Graphite — each a genuine material variant resolved from the model, not a color overlay.</p>
+            </div>
+
+            <div style="margin-top:40px;">
+                <h3 class="section-heading" style="font-size:1.2rem;">A Studio in a Drawer — Cameras &amp; Appearance</h3>
+                <p class="section-lead">
+                    A studio-controls drawer gives you named camera presets so anyone can jump to a flattering angle without fighting the mouse. The same drawer exposes appearance overrides: rim finish, glass tint, interior color, and headlight / brake-lamp toggles that switch the car's real lights on and off.
+                </p>
+                <img src="img/aurelion/studio-controls.png" alt="The studio controls drawer with camera presets and appearance options" class="screenshot">
+                <p class="mt-2" style="font-size: 0.8rem; color: var(--muted);">Named camera presets and appearance controls, so the experience is easy for anyone — not just people comfortable orbiting a 3D scene.</p>
+            </div>
+
+            <div style="margin-top:40px;">
+                <h3 class="section-heading" style="font-size:1.2rem;">Concept Vision</h3>
+                <p class="section-lead">
+                    A quieter scroll section pairs a short design story with three pillars — Form, Finish, and Interaction — giving the experience a point of view beyond the hardware.
+                </p>
+                <img src="img/aurelion/concept-vision.png" alt="The AURELION X1 Concept Vision scroll section" class="screenshot">
+                <p class="mt-2" style="font-size: 0.8rem; color: var(--muted);">A calm editorial moment that frames the design intent.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Stack -->
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-heading">Tech Stack</h2>
+
+            <table class="stack-table">
+                <thead>
+                    <tr><th>Area</th><th>Choice</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>3D Rendering</td><td>React Three Fiber, drei, Three.js</td></tr>
+                    <tr><td>Interface</td><td>React, responsive editorial layout</td></tr>
+                    <tr><td>Build &amp; Tooling</td><td>Vite, TypeScript</td></tr>
+                    <tr><td>Hosting</td><td>Vercel (auto-deploys on every push to <code>main</code>)</td></tr>
+                    <tr><td>3D Asset</td><td>Khronos &ldquo;CarConcept&rdquo; GLB, served locally</td></tr>
+                    <tr><td>Backend</td><td>None — fully static single-page app</td></tr>
+                </tbody>
+            </table>
+
+            <p class="section-lead mt-5">
+                The app ships as a static site with no backend or database, which keeps it fast, cheap to host, and simple to reason about. The vehicle is served from the app's own files, so the 3D model is never fetched from a third party at runtime.
+            </p>
+        </div>
+    </section>
+
+    <!-- Challenges & Iterations -->
+    <section class="content-section bg-light">
+        <div class="container">
+            <h2 class="section-heading">Challenges &amp; Iterations</h2>
+
+            <h3 class="section-heading mt-4" style="font-size:1.15rem;">Making 3D Feel Easy, Not Fiddly</h3>
+            <p class="section-lead">Free-orbiting a 3D scene is fun for about ten seconds and frustrating after that. The camera presets and Reset View exist so a non-technical visitor always has a one-click way back to a good-looking shot.</p>
+
+            <h3 class="section-heading mt-5" style="font-size:1.15rem;">Real Materials, Not Shortcuts</h3>
+            <p class="section-lead">It would have been faster to fake the paint changes with a color overlay. Reading the model's genuine finish variants and mapping them to the correct surfaces took more care, but it's the difference between a toy and something that feels like a real configurator.</p>
+
+            <h3 class="section-heading mt-5" style="font-size:1.15rem;">Motion That Respects the Visitor</h3>
+            <p class="section-lead">Auto-rotation, intro animation, and transitions all check for reduced-motion preferences and idle state, so the experience is lively without being aggressive or inaccessible.</p>
+        </div>
+    </section>
+
+    <!-- What I Learned -->
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-heading">What I Learned</h2>
+            <p class="section-lead">AURELION X1 gave me practical experience shipping an interactive product experience end to end.</p>
+
+            <div class="row g-3 mt-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-blue"><i class="fas fa-hand-pointer"></i></div>
+                        <h5>The Experience Is the Pitch</h5>
+                        <p>Letting someone <em>use</em> the product in the first three seconds does more than any amount of descriptive copy.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-violet"><i class="fas fa-robot"></i></div>
+                        <h5>AI Is a Force Multiplier, Not an Autopilot</h5>
+                        <p>The build moved fast because I paired AI implementation with tight human review — direction, design approval, and a real quality bar at every step.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-green"><i class="fas fa-cube"></i></div>
+                        <h5>Validate the Raw Material First</h5>
+                        <p>Inspecting the 3D asset before building meant the interface stood on facts about the model — which is why the finishes and lighting are genuine.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-blue"><i class="fas fa-universal-access"></i></div>
+                        <h5>Design for the Worst Case Too</h5>
+                        <p>A graceful fallback and reduced-motion support aren't afterthoughts — they're what keep the experience feeling premium for <em>everyone</em>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Attribution -->
+    <section class="content-section bg-light">
+        <div class="container">
+            <h2 class="section-heading">Attribution</h2>
+            <div class="highlight-box">
+                <p>&ldquo;CarConcept&rdquo; &copy; 2024 Darmstadt Graphics Group GmbH. Model and textures by Eric Chadwick, licensed CC BY 4.0. This is a concept-interface demo and is not affiliated with the Khronos Group or the Darmstadt Graphics Group. All concept statements and engineering notes are explicitly fictional.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Banner -->
+    <div class="container">
+        <div class="cta-banner">
+            <div>
+                <h4>Experience AURELION X1</h4>
+                <p>Open the live build to rotate the car, switch finishes, jump between camera angles, and explore the engineering hotspots for yourself.</p>
+            </div>
+            <div class="d-flex flex-wrap gap-3">
+                <a href="https://aurelion-x1.vercel.app/" target="_blank" rel="noopener" class="btn-primary-custom">
+                    <i class="fas fa-rocket"></i> View Live Experience
+                </a>
+                <a href="https://github.com/JpHolding1/aurelion-x1" target="_blank" rel="noopener" class="btn-outline-custom">
+                    <i class="fab fa-github"></i> View GitHub Repository
+                </a>
+                <a href="index.html#projects" class="btn-outline-custom">
+                    <i class="fas fa-arrow-left"></i> All Projects
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="container">
+            <div class="social-icons mb-3">
+                <a href="http://www.linkedin.com/in/jesus-perez-8a228b192" target="_blank" rel="noopener"><i class="fab fa-linkedin-in"></i></a>
+                <a href="https://github.com/JpHolding1" target="_blank" rel="noopener"><i class="fab fa-github"></i></a>
+                <a href="mailto:Jesusperez36070@gmail.com"><i class="fas fa-envelope"></i></a>
+            </div>
+            <p class="mb-0" style="font-size: 0.875rem;">&copy; <span id="year"></span> Jesus Perez. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <a href="#" class="back-to-top"><i class="fas fa-arrow-up"></i></a>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            document.querySelector('.navbar').classList.toggle('scrolled', window.pageYOffset > 50);
+            document.querySelector('.back-to-top').classList.toggle('active', window.pageYOffset > 300);
+        });
+
+        // Dark mode
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon   = document.getElementById('theme-icon');
+        const html        = document.documentElement;
+
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        if (savedTheme === 'dark') {
+            html.setAttribute('data-theme', 'dark');
+            themeIcon.classList.replace('fa-moon', 'fa-sun');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+                html.removeAttribute('data-theme');
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+    </script>
+</body>
+</html>
